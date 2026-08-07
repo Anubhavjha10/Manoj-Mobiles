@@ -57,13 +57,14 @@ export const MultiImageUpload = ({ value = [], onChange, onUploadError, folder =
 
     setUploadingFiles(prev => [...prev, ...newUploads]);
 
+    const successfulUrls = [];
     for (const upload of newUploads) {
       try {
         const secureUrl = await adminService.uploadImage(upload.file, folder);
         const url = typeof secureUrl === 'string' ? secureUrl : (secureUrl?.data || secureUrl?.url || secureUrl?.secure_url || '');
         
         if (url) {
-          onChange(prev => [...(prev || []), url]);
+          successfulUrls.push(url);
           setUploadingFiles(prev => prev.filter(u => u.id !== upload.id));
         } else {
           throw new Error("Invalid URL returned");
@@ -73,6 +74,10 @@ export const MultiImageUpload = ({ value = [], onChange, onUploadError, folder =
         setUploadingFiles(prev => prev.map(u => u.id === upload.id ? { ...u, status: 'error' } : u));
         if (onUploadError) onUploadError(`Failed to upload ${upload.file.name}`);
       }
+    }
+    
+    if (successfulUrls.length > 0) {
+      onChange([...(value || []), ...successfulUrls]);
     }
   };
 
