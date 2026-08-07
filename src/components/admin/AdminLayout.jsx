@@ -1,15 +1,20 @@
 import React from 'react';
 import { useStore } from '../../context/StoreContext';
-import { LayoutDashboard, ShoppingCart, Package, Users, RotateCcw, LogOut, Settings } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Users, RotateCcw, LogOut, Settings, Network, Award, Truck } from 'lucide-react';
 import { authService } from '../../services/authService';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-export const AdminLayout = ({ children, currentPath }) => {
-  const { navigateAdminTo, setAdminUser, adminUser, navigateTo } = useStore();
+export const AdminLayout = () => {
+  const { setAdminUser, adminUser } = useStore();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const currentPath = location.pathname.split('/').pop();
 
   const handleLogout = () => {
     authService.logout();
     setAdminUser({ loggedIn: false, name: '', email: '', role: '' });
-    navigateTo('home');
+    navigate('/');
   };
 
   const navItems = [
@@ -18,8 +23,9 @@ export const AdminLayout = ({ children, currentPath }) => {
     { id: 'products', label: 'Products', icon: <Package size={18} /> },
     { id: 'users', label: 'Users', icon: <Users size={18} /> },
     { id: 'returns', label: 'Returns', icon: <RotateCcw size={18} /> },
-    { id: 'delivery-agents', label: 'Delivery Agents', icon: <Package size={18} /> },
-    { id: 'catalog', label: 'Catalog', icon: <Settings size={18} /> },
+    { id: 'delivery-agents', label: 'Delivery Agents', icon: <Truck size={18} /> },
+    { id: 'categories', label: 'Categories', icon: <Network size={18} /> },
+    { id: 'brands', label: 'Brands', icon: <Award size={18} /> },
   ];
 
   return (
@@ -36,7 +42,7 @@ export const AdminLayout = ({ children, currentPath }) => {
             {navItems.map(item => (
               <li key={item.id}>
                 <button 
-                  onClick={() => navigateAdminTo(item.id)}
+                  onClick={() => navigate(`/admin/${item.id}`)}
                   style={{
                     width: '100%', display: 'flex', alignItems: 'center', gap: '0.75rem',
                     padding: '0.85rem 1.5rem', backgroundColor: currentPath === item.id ? '#334155' : 'transparent',
@@ -85,7 +91,7 @@ export const AdminLayout = ({ children, currentPath }) => {
 
         {/* Page Content */}
         <div style={{ padding: '2rem', flex: 1, overflowY: 'auto' }}>
-          {children}
+          <Outlet />
         </div>
       </main>
     </div>

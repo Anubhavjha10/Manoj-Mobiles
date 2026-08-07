@@ -56,8 +56,14 @@ export const AdminOrdersPage = () => {
     }
   };
 
+  const [trackingOrder, setTrackingOrder] = useState(null);
+
+  const handleTrack = (order) => {
+    setTrackingOrder(order);
+  };
+
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1E293B', marginBottom: '1.5rem' }}>Order Management</h2>
       
       <div style={{ backgroundColor: 'white', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
@@ -117,12 +123,85 @@ export const AdminOrdersPage = () => {
                         <option key={agent.id} value={agent.id}>{agent.name}</option>
                       ))}
                     </select>
+                    {order.status === 'OUT_FOR_DELIVERY' && (
+                      <button 
+                        onClick={() => handleTrack(order)}
+                        style={{ padding: '0.4rem', borderRadius: '0.25rem', border: 'none', backgroundColor: '#3B82F6', color: 'white', fontSize: '0.85rem', cursor: 'pointer', fontWeight: 600 }}
+                      >
+                        Track Location
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+      </div>
+      {trackingOrder && (
+        <TrackingModal order={trackingOrder} onClose={() => setTrackingOrder(null)} />
+      )}
+    </div>
+  );
+};
+
+const TrackingModal = ({ order, onClose }) => {
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let interval;
+    const fetchLoc = async () => {
+      try {
+        const res = await adminService.trackOrderLocation(order.id);
+        if(res) setLocation(res);
+      } catch (err) {
+        console.error("Failed to fetch location", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchLoc();
+    interval = setInterval(fetchLoc, 10000); // refresh every 10s
+    return () => clearInterval(interval);
+  }, [order.id]);
+
+  return (
+    <div className="modal-overlay" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100 }}>
+      <div className="modal-content" style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '12px', width: '500px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h3 style={{ margin: 0, fontSize: '1.25rem' }}>Live Tracking: {order.orderNumber || order.id.substring(0,8)}</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
+        </div>
+        
+        {loading ? (
+          <p>Connecting to agent GPS...</p>
+        ) : location ? (
+          <div>
+            <div style={{ backgroundColor: '#F1F5F9', padding: '1.5rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📍</div>
+              <p style={{ margin: '0 0 0.5rem 0', fontWeight: 600, color: '#334155' }}>Agent Current Location</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                <div style={{ backgroundColor: 'white', padding: '1rem', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block' }}>Latitude</span>
+                  <strong style={{ color: '#0F172A' }}>{location.lat}</strong>
+                </div>
+                <div style={{ backgroundColor: 'white', padding: '1rem', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block' }}>Longitude</span>
+                  <strong style={{ color: '#0F172A' }}>{location.lng}</strong>
+                </div>
+              </div>
+            </div>
+            <p style={{ fontSize: '0.875rem', color: '#64748B', textAlign: 'center' }}>
+              Last updated: {new Date(location.recordedAt).toLocaleTimeString()}
+            </p>
+          </div>
+        ) : (
+          <div style={{ padding: '2rem', textAlign: 'center', backgroundColor: '#FEF2F2', color: '#991B1B', borderRadius: '8px' }}>
+            Location data not available for this agent yet.
+          </div>
+        )}
       </div>
     </div>
   );

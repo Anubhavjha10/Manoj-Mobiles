@@ -750,12 +750,15 @@ img {
 }
 
 .category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.25rem;
+  justify-content: flex-start;
 }
 
 .category-card {
+  width: 160px;
+  flex: 0 0 auto;
   background: #FFFFFF;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
@@ -818,8 +821,8 @@ img {
 .brands-grid {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: flex-start;
+  gap: 1.5rem;
   overflow-x: auto;
   padding: 0.5rem 0;
   scrollbar-width: none;

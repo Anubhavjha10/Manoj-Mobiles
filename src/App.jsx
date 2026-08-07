@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useStore } from './context/StoreContext';
 import { Navbar } from './components/Navbar';
@@ -7,27 +7,29 @@ import { VideoModal } from './components/VideoModal';
 import { Toast } from './components/Toast';
 import { BottomNav } from './components/BottomNav';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Loader } from './components/Loader';
 
-import { HomePage } from './pages/HomePage';
-import { ProductListingPage } from './pages/ProductListingPage';
-import { ProductDetailPage } from './pages/ProductDetailPage';
-import { CartPage } from './pages/CartPage';
-import { WishlistPage } from './pages/WishlistPage';
-import { CheckoutPage } from './pages/CheckoutPage';
-import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
-import { TrackOrderPage } from './pages/TrackOrderPage';
-import { StoreLocatorPage } from './pages/StoreLocatorPage';
-import { AccountPage } from './pages/AccountPage';
+const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default: module.HomePage })));
+const ProductListingPage = lazy(() => import('./pages/ProductListingPage').then(module => ({ default: module.ProductListingPage })));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage').then(module => ({ default: module.ProductDetailPage })));
+const CartPage = lazy(() => import('./pages/CartPage').then(module => ({ default: module.CartPage })));
+const WishlistPage = lazy(() => import('./pages/WishlistPage').then(module => ({ default: module.WishlistPage })));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then(module => ({ default: module.CheckoutPage })));
+const OrderConfirmationPage = lazy(() => import('./pages/OrderConfirmationPage').then(module => ({ default: module.OrderConfirmationPage })));
+const TrackOrderPage = lazy(() => import('./pages/TrackOrderPage').then(module => ({ default: module.TrackOrderPage })));
+const StoreLocatorPage = lazy(() => import('./pages/StoreLocatorPage').then(module => ({ default: module.StoreLocatorPage })));
+const AccountPage = lazy(() => import('./pages/AccountPage').then(module => ({ default: module.AccountPage })));
 
-import { AdminLayout } from './components/admin/AdminLayout';
-import { AdminLoginPage } from './pages/admin/AdminLoginPage';
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
-import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
-import { AdminProductsPage } from './pages/admin/AdminProductsPage';
-import { AdminUsersPage } from './pages/admin/AdminUsersPage';
-import { AdminReturnsPage } from './pages/admin/AdminReturnsPage';
-import { AdminDeliveryAgentsPage } from './pages/admin/AdminDeliveryAgentsPage';
-import { AdminCatalogPage } from './pages/admin/AdminCatalogPage';
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(module => ({ default: module.AdminLayout })));
+const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage').then(module => ({ default: module.AdminLoginPage })));
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(module => ({ default: module.AdminDashboardPage })));
+const AdminOrdersPage = lazy(() => import('./pages/admin/AdminOrdersPage').then(module => ({ default: module.AdminOrdersPage })));
+const AdminProductsPage = lazy(() => import('./pages/admin/AdminProductsPage').then(module => ({ default: module.AdminProductsPage })));
+const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then(module => ({ default: module.AdminUsersPage })));
+const AdminReturnsPage = lazy(() => import('./pages/admin/AdminReturnsPage').then(module => ({ default: module.AdminReturnsPage })));
+const AdminDeliveryAgentsPage = lazy(() => import('./pages/admin/AdminDeliveryAgentsPage').then(module => ({ default: module.AdminDeliveryAgentsPage })));
+const AdminCategoriesPage = lazy(() => import('./pages/admin/AdminCategoriesPage').then(module => ({ default: module.AdminCategoriesPage })));
+const AdminBrandsPage = lazy(() => import('./pages/admin/AdminBrandsPage').then(module => ({ default: module.AdminBrandsPage })));
 
 const PageTransition = ({ children }) => (
   <motion.div
@@ -62,55 +64,55 @@ export const App = () => {
   return (
     <div className="app-root">
       <ScrollToTop />
-      <Routes location={location} key={location.pathname}>
-        {/* Admin Routes */}
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        
-        <Route path="/admin" element={
-          <AdminProtectedRoute>
-            <AdminLayout />
-          </AdminProtectedRoute>
-        }>
-          <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<AdminDashboardPage />} />
-          <Route path="orders" element={<AdminOrdersPage />} />
-          <Route path="products" element={<AdminProductsPage />} />
-          <Route path="users" element={<AdminUsersPage />} />
-          <Route path="returns" element={<AdminReturnsPage />} />
-          <Route path="delivery-agents" element={<AdminDeliveryAgentsPage />} />
-          <Route path="catalog" element={<AdminCatalogPage />} />
-        </Route>
+      <Suspense fallback={<Loader />}>
+        <Routes location={location} key={location.pathname}>
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          
+          <Route path="/admin" element={
+            <AdminProtectedRoute>
+              <AdminLayout />
+            </AdminProtectedRoute>
+          }>
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="products" element={<AdminProductsPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="returns" element={<AdminReturnsPage />} />
+            <Route path="delivery-agents" element={<AdminDeliveryAgentsPage />} />
+            <Route path="categories" element={<AdminCategoriesPage />} />
+            <Route path="brands" element={<AdminBrandsPage />} />
+          </Route>
 
-        {/* Customer Routes */}
-        <Route path="/*" element={
-          <>
-            <Navbar />
-            <main id="app-content">
-              <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
-                  <Route index element={<PageTransition><HomePage /></PageTransition>} />
-                  <Route path="products" element={<PageTransition><ProductListingPage /></PageTransition>} />
-                  <Route path="product/:id" element={<PageTransition><ProductDetailPage /></PageTransition>} />
-                  <Route path="cart" element={<PageTransition><CartPage /></PageTransition>} />
-                  <Route path="wishlist" element={<PageTransition><WishlistPage /></PageTransition>} />
-                  <Route path="checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
-                  <Route path="order-confirmation" element={<PageTransition><OrderConfirmationPage /></PageTransition>} />
-                  <Route path="track-order" element={<PageTransition><TrackOrderPage /></PageTransition>} />
-                  <Route path="store-locator" element={<PageTransition><StoreLocatorPage /></PageTransition>} />
-                  <Route path="account" element={<PageTransition><AccountPage /></PageTransition>} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </AnimatePresence>
-            </main>
-            <Footer />
-            <VideoModal />
-            <BottomNav />
-          </>
-        } />
-        
-        {/* Fallback for Customer Routes */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Customer Routes */}
+          <Route path="/*" element={
+            <>
+              <Navbar />
+              <main id="app-content">
+                <AnimatePresence mode="wait">
+                  <Routes location={location} key={location.pathname}>
+                    <Route index element={<PageTransition><HomePage /></PageTransition>} />
+                    <Route path="products" element={<PageTransition><ProductListingPage /></PageTransition>} />
+                    <Route path="product/:id" element={<PageTransition><ProductDetailPage /></PageTransition>} />
+                    <Route path="cart" element={<PageTransition><CartPage /></PageTransition>} />
+                    <Route path="wishlist" element={<PageTransition><WishlistPage /></PageTransition>} />
+                    <Route path="checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
+                    <Route path="order-confirmation" element={<PageTransition><OrderConfirmationPage /></PageTransition>} />
+                    <Route path="track-order" element={<PageTransition><TrackOrderPage /></PageTransition>} />
+                    <Route path="store-locator" element={<PageTransition><StoreLocatorPage /></PageTransition>} />
+                    <Route path="account" element={<PageTransition><AccountPage /></PageTransition>} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </AnimatePresence>
+              </main>
+              <Footer />
+              <VideoModal />
+              <BottomNav />
+            </>
+          } />
+        </Routes>
+      </Suspense>
       <Toast />
     </div>
   );

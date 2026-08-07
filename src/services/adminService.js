@@ -22,6 +22,16 @@ export const adminService = {
     }
   },
 
+  trackOrderLocation: async (orderId) => {
+    try {
+      const response = await api.get(`/user/orders/${orderId}/track`);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error tracking order ${orderId}:`, error);
+      throw error;
+    }
+  },
+
   assignAgentToOrder: async (orderId, agentId) => {
     try {
       const response = await api.post(`/admin/orders/${orderId}/assign-agent`, { agentId });
@@ -151,6 +161,56 @@ export const adminService = {
       return response.data || response;
     } catch (error) {
       console.error(`Error deleting variant ${variantId}:`, error);
+      throw error;
+    }
+  },
+
+  addVariantSpecifications: async (variantId, specsArray) => {
+    try {
+      const response = await api.post(`/products/variants/${variantId}/specifications`, specsArray);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error adding specs to variant ${variantId}:`, error);
+      throw error;
+    }
+  },
+
+  deleteSpecification: async (specId) => {
+    try {
+      const response = await api.delete(`/products/specifications/${specId}`);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error deleting specification ${specId}:`, error);
+      throw error;
+    }
+  },
+
+  adjustInventory: async (variantId, data) => {
+    try {
+      const response = await api.post(`/products/variants/${variantId}/inventory`, data);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error adjusting inventory for variant ${variantId}:`, error);
+      throw error;
+    }
+  },
+
+  addVariantImages: async (variantId, imageUrlsArray) => {
+    try {
+      const response = await api.post(`/products/variants/${variantId}/images`, imageUrlsArray);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error adding images to variant ${variantId}:`, error);
+      throw error;
+    }
+  },
+
+  deleteImage: async (imageId) => {
+    try {
+      const response = await api.delete(`/products/images/${imageId}`);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error deleting image ${imageId}:`, error);
       throw error;
     }
   },
