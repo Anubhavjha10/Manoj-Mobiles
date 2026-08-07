@@ -30,7 +30,9 @@ const handleResponse = async (response) => {
   if (!response.ok) {
     if (response.status === 401) {
       setToken(null);
-      // Optional: dispatch a logout event or redirect to login
+      localStorage.removeItem('mm_admin_user');
+      localStorage.removeItem('mm_user');
+      window.location.reload();
     }
     
     // Try to parse error message from backend

@@ -7,11 +7,13 @@ export const AdminOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [agents, setAgents] = useState([]);
+
   const fetchOrders = async () => {
     setLoading(true);
     try {
       const res = await adminService.getOrders(0, 50);
-      setOrders(res.data?.content || []);
+      setOrders(res?.content || []);
     } catch (error) {
       showToast('Failed to load orders');
     } finally {
@@ -19,17 +21,38 @@ export const AdminOrdersPage = () => {
     }
   };
 
+  const fetchAgents = async () => {
+    try {
+      const res = await adminService.getDeliveryAgents(0, 100);
+      setAgents(res?.content || []);
+    } catch (error) {
+      console.error('Failed to load agents');
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
+    fetchAgents();
   }, []);
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await adminService.updateOrderStatus(orderId, newStatus);
+      await adminService.updateOrderStatus(orderId, newStatus, "Status updated by admin");
       showToast(`Order status updated to ${newStatus}`);
       fetchOrders(); // refresh
     } catch (error) {
       showToast('Failed to update status');
+    }
+  };
+
+  const handleAssignAgent = async (orderId, agentId) => {
+    if (!agentId) return;
+    try {
+      await adminService.assignAgentToOrder(orderId, agentId);
+      showToast('Agent assigned successfully');
+      fetchOrders();
+    } catch (error) {
+      showToast('Failed to assign agent');
     }
   };
 
@@ -68,17 +91,31 @@ export const AdminOrdersPage = () => {
                       {order.status}
                     </span>
                   </td>
-                  <td style={{ padding: '1rem' }}>
+                  <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
                     <select 
                       value={order.status} 
                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
                       style={{ padding: '0.4rem', borderRadius: '0.25rem', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
                     >
-                      <option value="PENDING">Pending</option>
-                      <option value="PROCESSING">Processing</option>
+                      <option value="PLACED">Placed</option>
+                      <option value="CONFIRMED">Confirmed</option>
+                      <option value="PACKED">Packed</option>
                       <option value="SHIPPED">Shipped</option>
+                      <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
                       <option value="DELIVERED">Delivered</option>
                       <option value="CANCELLED">Cancelled</option>
+                      <option value="RETURNED">Returned</option>
+                    </select>
+
+                    <select
+                      value={order.deliveryAgentId || ''}
+                      onChange={(e) => handleAssignAgent(order.id, e.target.value)}
+                      style={{ padding: '0.4rem', borderRadius: '0.25rem', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
+                    >
+                      <option value="">Assign Agent...</option>
+                      {agents.map(agent => (
+                        <option key={agent.id} value={agent.id}>{agent.name}</option>
+                      ))}
                     </select>
                   </td>
                 </tr>

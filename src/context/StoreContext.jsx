@@ -5,6 +5,13 @@ const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
   const [activeView, setActiveView] = useState(() => {
+    const path = window.location.pathname;
+    if (path.startsWith('/admin')) {
+      if (path === '/admin' || path === '/admin/') return 'admin-dashboard';
+      if (path === '/admin/login') return 'admin-login';
+      const view = path.split('/admin/')[1];
+      return `admin-${view}`;
+    }
     return sessionStorage.getItem('mm_active_view') || 'home';
   });
   const [previousView, setPreviousView] = useState('home');
@@ -42,6 +49,19 @@ export const StoreProvider = ({ children }) => {
 
   useEffect(() => {
     loadData();
+
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/admin')) {
+        if (path === '/admin' || path === '/admin/') setActiveView('admin-dashboard');
+        else if (path === '/admin/login') setActiveView('admin-login');
+        else setActiveView(`admin-${path.split('/admin/')[1]}`);
+      } else {
+        setActiveView(sessionStorage.getItem('mm_active_view') || 'home');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const [cart, setCart] = useState(() => {
@@ -106,7 +126,9 @@ export const StoreProvider = ({ children }) => {
   }, [adminUser]);
 
   useEffect(() => {
-    sessionStorage.setItem('mm_active_view', activeView);
+    if (!activeView.startsWith('admin-')) {
+      sessionStorage.setItem('mm_active_view', activeView);
+    }
   }, [activeView]);
 
   const showToast = (message) => {
@@ -130,10 +152,13 @@ export const StoreProvider = ({ children }) => {
   };
 
   const navigateAdminTo = (adminView) => {
-    const fullViewName = adminView.startsWith('admin-') ? adminView : `admin-${adminView}`;
+    const path = adminView.replace('admin-', '');
+    const fullViewName = `admin-${path}`;
+    
     if (fullViewName !== activeView) {
       setPreviousView(activeView);
       setActiveView(fullViewName);
+      window.history.pushState({}, '', `/admin/${path}`);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

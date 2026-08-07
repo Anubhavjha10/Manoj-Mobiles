@@ -24,6 +24,8 @@ import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
 import { AdminProductsPage } from './pages/admin/AdminProductsPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminReturnsPage } from './pages/admin/AdminReturnsPage';
+import { AdminDeliveryAgentsPage } from './pages/admin/AdminDeliveryAgentsPage';
+import { AdminCatalogPage } from './pages/admin/AdminCatalogPage';
 
 export const App = () => {
   const { activeView, adminUser } = useStore();
@@ -58,6 +60,7 @@ export const App = () => {
   const renderAdminView = () => {
     // If not logged in, force login page regardless of activeView
     if (!adminUser?.loggedIn && activeView !== 'admin-login') {
+      window.history.replaceState({}, '', '/admin/login');
       return <AdminLoginPage />;
     }
     
@@ -74,6 +77,10 @@ export const App = () => {
         return <AdminUsersPage />;
       case 'admin-returns':
         return <AdminReturnsPage />;
+      case 'admin-delivery-agents':
+        return <AdminDeliveryAgentsPage />;
+      case 'admin-catalog':
+        return <AdminCatalogPage />;
       default:
         return <AdminDashboardPage />;
     }
@@ -84,9 +91,9 @@ export const App = () => {
   return (
     <div className="app-root">
       {isAdminRoute ? (
-        activeView === 'admin-login' ? (
+        (!adminUser?.loggedIn || activeView === 'admin-login') ? (
           <>
-            {renderAdminView()}
+            <AdminLoginPage />
             <Toast />
           </>
         ) : (

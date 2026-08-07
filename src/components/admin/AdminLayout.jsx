@@ -18,6 +18,8 @@ export const AdminLayout = ({ children, currentPath }) => {
     { id: 'products', label: 'Products', icon: <Package size={18} /> },
     { id: 'users', label: 'Users', icon: <Users size={18} /> },
     { id: 'returns', label: 'Returns', icon: <RotateCcw size={18} /> },
+    { id: 'delivery-agents', label: 'Delivery Agents', icon: <Package size={18} /> },
+    { id: 'catalog', label: 'Catalog', icon: <Settings size={18} /> },
   ];
 
   return (

@@ -11,7 +11,7 @@ export const AdminReturnsPage = () => {
     setLoading(true);
     try {
       const res = await adminService.getReturns(0, 50);
-      setReturns(res.data?.content || []);
+      setReturns(res?.content || []);
     } catch (error) {
       showToast('Failed to load returns');
     } finally {
@@ -76,10 +76,8 @@ export const AdminReturnsPage = () => {
                     >
                       <option value="REQUESTED">Requested</option>
                       <option value="APPROVED">Approved</option>
-                      <option value="IN_TRANSIT">In Transit</option>
-                      <option value="RECEIVED_IN_WAREHOUSE">Received</option>
-                      <option value="INSPECTING">Inspecting</option>
-                      <option value="COMPLETED">Completed</option>
+                      <option value="PICKED">Picked</option>
+                      <option value="REFUNDED">Refunded</option>
                       <option value="REJECTED">Rejected</option>
                     </select>
                   </td>
