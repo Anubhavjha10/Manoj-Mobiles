@@ -204,7 +204,7 @@ export const StoreProvider = ({ children }) => {
       previousView: '/',
       selectedProductId, setSelectedProductId,
       filters, setFilters,
-      products, setProducts, refreshProducts: loadData, categories, brands, loadingProducts,
+      products, setProducts, refreshProducts: loadData, refreshCategories: loadData, refreshBrands: loadData, categories, brands, loadingProducts,
       cart, addToCart, updateCartQty, removeFromCart,
       wishlist, toggleWishlist,
       user, setUser,

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminService';
 import { useStore } from '../../context/StoreContext';
-
-import { Plus, Trash2, Edit } from 'lucide-react';
+import { Plus, Trash2, Edit, Users as UsersIcon, UserPlus, X, Shield } from 'lucide-react';
+import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 
 export const AdminUsersPage = () => {
   const { showToast } = useStore();
@@ -10,14 +10,8 @@ export const AdminUsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    role: 'CUSTOMER'
-  });
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', role: 'CUSTOMER' });
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -31,35 +25,24 @@ export const AdminUsersPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => { fetchUsers(); }, []);
 
   const handleEditClick = (user) => {
     setEditingUser(user);
-    setFormData({
-      name: user.name || '',
-      email: user.email || '',
-      phone: user.phone || '',
-      password: '',
-      role: user.role || 'CUSTOMER'
-    });
+    setFormData({ name: user.name || '', email: user.email || '', phone: user.phone || '', password: '', role: user.role || 'CUSTOMER' });
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to block/delete this user?')) {
-      try {
-        await adminService.deleteUser(id);
-        showToast('User deleted successfully');
-        fetchUsers();
-      } catch (err) {
-        showToast('Failed to delete user');
-      }
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await adminService.deleteUser(deleteTarget);
+      showToast('User deleted successfully');
+      fetchUsers();
+    } catch (err) {
+      showToast('Failed to delete user');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -82,82 +65,79 @@ export const AdminUsersPage = () => {
     }
   };
 
+  const roleColors = {
+    ADMIN: { bg: '#EDE9FE', color: '#6D28D9' },
+    DELIVERY_AGENT: { bg: '#FEF3C7', color: '#92400E' },
+    CUSTOMER: { bg: '#F1F5F9', color: '#475569' },
+  };
+
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1E293B', margin: 0 }}>User Management</h2>
-        <button 
-          onClick={() => setShowForm(!showForm)}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#38BDF8', color: 'white', border: 'none', padding: '0.75rem 1.25rem', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 600 }}
-        >
-          {showForm ? 'Cancel' : <><Plus size={18} /> Add New User</>}
+    <div className="admin-page-container">
+      <div className="admin-header">
+        <h2 className="admin-page-title"><UsersIcon className="title-icon" /> User Management</h2>
+        <button className="btn btn-primary" onClick={() => { setEditingUser(null); setFormData({ name: '', email: '', phone: '', password: '', role: 'ADMIN' }); setShowForm(!showForm); }}>
+          {showForm ? <><X size={18} /> Close</> : <><Shield size={18} /> Add Admin</>}
         </button>
       </div>
 
       {showForm && (
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
-          <h3 style={{ margin: '0 0 1rem 0' }}>{editingUser ? 'Edit User' : 'Create New User/Staff'}</h3>
+        <div className="admin-form-box">
+          <h3 className="form-title">{editingUser ? 'Edit User' : 'Create New Admin'}</h3>
           <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required style={{ padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '0.375rem' }} />
-            <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Email" required style={{ padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '0.375rem' }} />
-            <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="Phone" required style={{ padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '0.375rem' }} />
-            <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder={editingUser ? "Leave empty to keep password" : "Password"} required={!editingUser} style={{ padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '0.375rem' }} />
-            <select name="role" value={formData.role} onChange={handleInputChange} style={{ padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '0.375rem' }}>
-              <option value="CUSTOMER">Customer</option>
-              <option value="ADMIN">Admin</option>
-              <option value="DELIVERY_AGENT">Delivery Agent</option>
-            </select>
-            
-            <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <button type="submit" style={{ backgroundColor: '#10B981', color: 'white', padding: '0.75rem 1.5rem', border: 'none', borderRadius: '0.375rem', fontWeight: 600, cursor: 'pointer' }}>
-                {editingUser ? 'Update User' : 'Save User'}
-              </button>
+            <div><label>Full Name</label><input type="text" name="name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="John Doe" required className="form-input" /></div>
+            <div><label>Email</label><input type="email" name="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="john@email.com" required className="form-input" /></div>
+            <div><label>Phone</label><input type="text" name="phone" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="9876543210" required className="form-input" /></div>
+            <div><label>Password</label><input type="password" name="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder={editingUser ? "Leave empty to keep" : "••••••"} required={!editingUser} className="form-input" /></div>
+            <div><label>Role</label>
+              <select name="role" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="form-input">
+                <option value="ADMIN">Admin</option>
+                <option value="DELIVERY_AGENT">Delivery Agent</option>
+                <option value="CUSTOMER">Customer</option>
+              </select>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem' }}>
+              <button type="submit" className="btn btn-primary">Save</button>
+              <button type="button" className="btn btn-outline" onClick={() => { setShowForm(false); setEditingUser(null); }}>Cancel</button>
             </div>
           </form>
         </div>
       )}
-      
-      <div style={{ backgroundColor: 'white', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead style={{ backgroundColor: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-            <tr>
-              <th style={{ padding: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Name</th>
-              <th style={{ padding: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Email</th>
-              <th style={{ padding: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Phone</th>
-              <th style={{ padding: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Role</th>
-              <th style={{ padding: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Actions</th>
-            </tr>
+
+      <div className="admin-table-container">
+        <table className="admin-table">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center' }}>Loading users...</td></tr>
+              <tr><td colSpan="6" className="empty-state">Loading users...</td></tr>
             ) : users.length === 0 ? (
-              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center' }}>No users found.</td></tr>
+              <tr><td colSpan="6" className="empty-state">No users found.</td></tr>
             ) : (
-              users.map(u => (
-                <tr key={u.id} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#0F172A', fontWeight: 500 }}>{u.name}</td>
-                  <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#64748B' }}>{u.email}</td>
-                  <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#64748B' }}>{u.phone || 'N/A'}</td>
-                  <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#64748B' }}>
-                    <span style={{ padding: '0.25rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, backgroundColor: u.role === 'ADMIN' ? '#EDE9FE' : '#F1F5F9', color: u.role === 'ADMIN' ? '#6D28D9' : '#475569' }}>
-                      {u.role || 'CUSTOMER'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => handleEditClick(u)} style={{ padding: '0.5rem', backgroundColor: '#E0F2FE', color: '#0284C7', border: 'none', borderRadius: '0.25rem', cursor: 'pointer' }}>
-                      <Edit size={16} />
-                    </button>
-                    <button onClick={() => handleDelete(u.id)} style={{ padding: '0.5rem', backgroundColor: '#FEE2E2', color: '#DC2626', border: 'none', borderRadius: '0.25rem', cursor: 'pointer' }}>
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))
+              users.map(u => {
+                const rc = roleColors[u.role] || roleColors.CUSTOMER;
+                return (
+                  <tr key={u.id}>
+                    <td style={{ fontWeight: 600 }}>{u.name}</td>
+                    <td>{u.email}</td>
+                    <td>{u.phone || 'N/A'}</td>
+                    <td><span className="badge" style={{ backgroundColor: rc.bg, color: rc.color }}><Shield size={12} style={{ marginRight: '4px' }} />{u.role || 'CUSTOMER'}</span></td>
+                    <td><span className={`badge ${u.status === 'ACTIVE' ? 'badge-solid' : ''}`} style={u.status !== 'ACTIVE' ? { color: '#EF4444', borderColor: '#EF4444', border: '1.5px solid' } : {}}>{u.status || 'ACTIVE'}</span></td>
+                    <td>
+                      <div className="action-buttons">
+                        <button className="icon-btn edit-btn" onClick={() => handleEditClick(u)}><Edit size={16} /></button>
+                        <button className="icon-btn delete-btn" onClick={() => setDeleteTarget(u.id)}><Trash2 size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog isOpen={!!deleteTarget} title="Delete User?" message="Are you sure you want to block/delete this user? This action cannot be easily undone." onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} confirmText="Delete User" danger />
     </div>
   );
 };
