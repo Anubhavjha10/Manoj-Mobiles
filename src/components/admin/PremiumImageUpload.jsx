@@ -40,6 +40,11 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'g
       if (onUploadError) onUploadError("Please select a valid image file.");
       return;
     }
+
+    if (file.size > 25 * 1024 * 1024) {
+      if (onUploadError) onUploadError("File size exceeds 25MB limit.");
+      return;
+    }
     
     // Create instant local preview object URL
     const objectUrl = URL.createObjectURL(file);

@@ -16,7 +16,7 @@ export const PremiumRichTextEditor = ({ value, onChange, placeholder = "Enter de
   const formats = [
     'header',
     'bold', 'italic', 'underline', 'strike',
-    'list', 'bullet',
+    'list',
     'link'
   ];
 
