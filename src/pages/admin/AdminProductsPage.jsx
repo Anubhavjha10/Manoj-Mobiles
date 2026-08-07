@@ -3,9 +3,11 @@ import { useStore } from '../../context/StoreContext';
 import { adminService } from '../../services/adminService';
 import { Plus, Trash2, Edit, Layers, X, Image as ImageIcon, Box, List } from 'lucide-react';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
+import { useNavigate } from 'react-router-dom';
 
 export const AdminProductsPage = () => {
   const { products, categories, brands, setProducts, refreshProducts, formatINR, showToast } = useStore();
+  const navigate = useNavigate();
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeProduct, setActiveProduct] = useState(null);
@@ -51,50 +53,10 @@ export const AdminProductsPage = () => {
     <div className="admin-page-container">
       <div className="admin-header">
         <h2 className="admin-page-title"><Layers className="title-icon" /> Product Inventory</h2>
-        <button className="btn btn-primary" onClick={() => setShowAddForm(!showAddForm)}>
-          {showAddForm ? <><X size={18} /> Close</> : <><Plus size={18} /> Add New Product</>}
+        <button className="btn btn-primary" onClick={() => navigate('/admin/products/add')}>
+          <Plus size={18} /> Add New Product
         </button>
       </div>
-
-      {showAddForm && (
-        <div className="admin-form-box">
-          <h3 className="form-title">Add New Product (Base Details)</h3>
-          <form onSubmit={handleCreate} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div style={{ gridColumn: '1 / -1' }}><label>Product Name</label><input required type="text" placeholder="e.g. iPhone 15 Pro" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="form-input" /></div>
-            
-            <div>
-              <label>Brand</label>
-              <select required value={formData.brandId} onChange={e => setFormData({...formData, brandId: e.target.value})} className="form-input">
-                <option value="">Select Brand...</option>
-                {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-              </select>
-            </div>
-            
-            <div>
-              <label>Category</label>
-              <select required value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})} className="form-input">
-                <option value="">Select Category...</option>
-                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-
-            <div><label>Warranty (Months)</label><input required type="number" placeholder="12" value={formData.warrantyMonths} onChange={e => setFormData({...formData, warrantyMonths: e.target.value})} className="form-input" /></div>
-            <div><label>Return Policy (Days)</label><input required type="number" placeholder="7" value={formData.returnPolicyDays} onChange={e => setFormData({...formData, returnPolicyDays: e.target.value})} className="form-input" /></div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', gridColumn: '1 / -1', padding: '0.5rem 0' }}>
-              <input type="checkbox" id="isReturnable" checked={formData.isReturnable} onChange={e => setFormData({...formData, isReturnable: e.target.checked})} style={{ width: '18px', height: '18px', cursor: 'pointer' }} />
-              <label htmlFor="isReturnable" style={{ margin: 0, fontSize: '0.9rem', cursor: 'pointer' }}>Item is eligible for return</label>
-            </div>
-
-            <div style={{ gridColumn: '1 / -1' }}><label>Description</label><textarea required placeholder="Detailed product description..." value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="form-input"></textarea></div>
-            
-            <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-              <button type="button" className="btn btn-outline" onClick={() => setShowAddForm(false)}>Cancel</button>
-              <button type="submit" disabled={loading} className="btn btn-primary">{loading ? 'Saving...' : 'Save Product'}</button>
-            </div>
-          </form>
-        </div>
-      )}
 
       <div className="admin-table-container">
         <table className="admin-table">
@@ -118,7 +80,7 @@ export const AdminProductsPage = () => {
                       <button onClick={() => setActiveProduct(p)} className="btn btn-outline btn-sm" style={{ borderColor: '#8B5CF6', color: '#8B5CF6' }} title="Manage Variants">
                         <Layers size={14} /> Variants
                       </button>
-                      <button className="icon-btn edit-btn"><Edit size={16} /></button>
+                      <button onClick={() => navigate(`/admin/products/edit/${p.id}`)} className="icon-btn edit-btn"><Edit size={16} /></button>
                       <button onClick={() => setDeleteTarget(p.id)} className="icon-btn delete-btn"><Trash2 size={16} /></button>
                     </div>
                   </td>

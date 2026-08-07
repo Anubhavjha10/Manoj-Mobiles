@@ -25,11 +25,16 @@ const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage').then(mo
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(module => ({ default: module.AdminDashboardPage })));
 const AdminOrdersPage = lazy(() => import('./pages/admin/AdminOrdersPage').then(module => ({ default: module.AdminOrdersPage })));
 const AdminProductsPage = lazy(() => import('./pages/admin/AdminProductsPage').then(module => ({ default: module.AdminProductsPage })));
+const AdminProductFormPage = lazy(() => import('./pages/admin/AdminProductFormPage').then(module => ({ default: module.AdminProductFormPage })));
 const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then(module => ({ default: module.AdminUsersPage })));
+const AdminUserFormPage = lazy(() => import('./pages/admin/AdminUserFormPage').then(module => ({ default: module.AdminUserFormPage })));
 const AdminReturnsPage = lazy(() => import('./pages/admin/AdminReturnsPage').then(module => ({ default: module.AdminReturnsPage })));
 const AdminDeliveryAgentsPage = lazy(() => import('./pages/admin/AdminDeliveryAgentsPage').then(module => ({ default: module.AdminDeliveryAgentsPage })));
+const AdminDeliveryAgentModal = lazy(() => import('./components/admin/AdminDeliveryAgentModal').then(module => ({ default: module.AdminDeliveryAgentModal })));
 const AdminCategoriesPage = lazy(() => import('./pages/admin/AdminCategoriesPage').then(module => ({ default: module.AdminCategoriesPage })));
+const AdminCategoryModal = lazy(() => import('./components/admin/AdminCategoryModal').then(module => ({ default: module.AdminCategoryModal })));
 const AdminBrandsPage = lazy(() => import('./pages/admin/AdminBrandsPage').then(module => ({ default: module.AdminBrandsPage })));
+const AdminBrandModal = lazy(() => import('./components/admin/AdminBrandModal').then(module => ({ default: module.AdminBrandModal })));
 
 const PageTransition = ({ children }) => (
   <motion.div
@@ -77,12 +82,31 @@ export const App = () => {
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route path="orders" element={<AdminOrdersPage />} />
+            
             <Route path="products" element={<AdminProductsPage />} />
+            <Route path="products/add" element={<AdminProductFormPage />} />
+            <Route path="products/edit/:id" element={<AdminProductFormPage />} />
+            
             <Route path="users" element={<AdminUsersPage />} />
+            <Route path="users/add" element={<AdminUserFormPage />} />
+            <Route path="users/edit/:id" element={<AdminUserFormPage />} />
+            
             <Route path="returns" element={<AdminReturnsPage />} />
-            <Route path="delivery-agents" element={<AdminDeliveryAgentsPage />} />
-            <Route path="categories" element={<AdminCategoriesPage />} />
-            <Route path="brands" element={<AdminBrandsPage />} />
+            
+            <Route path="delivery-agents" element={<AdminDeliveryAgentsPage />}>
+              <Route path="add" element={<AdminDeliveryAgentModal />} />
+              <Route path="edit/:id" element={<AdminDeliveryAgentModal />} />
+            </Route>
+            
+            <Route path="categories" element={<AdminCategoriesPage />}>
+              <Route path="add" element={<AdminCategoryModal />} />
+              <Route path="edit/:id" element={<AdminCategoryModal />} />
+            </Route>
+            
+            <Route path="brands" element={<AdminBrandsPage />}>
+              <Route path="add" element={<AdminBrandModal />} />
+              <Route path="edit/:id" element={<AdminBrandModal />} />
+            </Route>
           </Route>
 
           {/* Customer Routes */}
