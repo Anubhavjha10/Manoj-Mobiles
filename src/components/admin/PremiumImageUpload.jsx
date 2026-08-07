@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { UploadCloud, Link as LinkIcon, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 
-export const PremiumImageUpload = ({ value, onChange, onUploadError }) => {
+export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = '' }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [inputMode, setInputMode] = useState('upload'); // 'upload' or 'url'
@@ -43,7 +43,7 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError }) => {
     setIsUploading(true);
     try {
       // Assuming adminService.uploadImage returns a plain string URL
-      const secureUrl = await adminService.uploadImage(file);
+      const secureUrl = await adminService.uploadImage(file, folder);
       const url = typeof secureUrl === 'string' ? secureUrl : secureUrl.url;
       onChange(url);
       setUrlInput(url);

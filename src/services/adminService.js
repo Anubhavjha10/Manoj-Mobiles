@@ -257,12 +257,14 @@ export const adminService = {
   },
 
   // --- Upload ---
-  uploadImage: async (file) => {
+  uploadImage: async (file, folder = '') => {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      
+      const query = folder ? `?folder=${encodeURIComponent(folder)}` : '';
       // Returns a string URL
-      const response = await api.postFormData('/admin/upload', formData);
+      const response = await api.postFormData(`/admin/upload${query}`, formData);
       return response;
     } catch (error) {
       console.error('Error uploading image:', error);

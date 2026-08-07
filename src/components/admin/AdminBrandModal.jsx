@@ -5,6 +5,8 @@ import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PremiumImageUpload } from './PremiumImageUpload';
 
+import { PremiumRichTextEditor } from './PremiumRichTextEditor';
+
 export const AdminBrandModal = () => {
   const { brands, refreshBrands, showToast } = useStore();
   const navigate = useNavigate();
@@ -76,9 +78,12 @@ export const AdminBrandModal = () => {
               onUploadError={showToast} 
             />
           </div>
-          <div>
+          <div style={{ gridColumn: '1 / -1' }}>
             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Description</label>
-            <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Brand description..." className="form-input" rows={2}></textarea>
+            <PremiumRichTextEditor 
+              value={formData.description} 
+              onChange={(val) => setFormData({...formData, description: val})} 
+            />
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
             <button type="button" className="btn btn-outline" onClick={handleClose}>Cancel</button>

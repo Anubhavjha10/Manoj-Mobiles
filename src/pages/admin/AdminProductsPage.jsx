@@ -328,6 +328,7 @@ const ImageModal = ({ variant, onClose }) => {
             value={url} 
             onChange={setUrl} 
             onUploadError={showToast} 
+            folder="products"
           />
           <button 
             type="button" 

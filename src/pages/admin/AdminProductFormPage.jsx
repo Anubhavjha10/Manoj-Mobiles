@@ -3,6 +3,7 @@ import { useStore } from '../../context/StoreContext';
 import { adminService } from '../../services/adminService';
 import { Layers, ChevronLeft } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { PremiumRichTextEditor } from '../../components/admin/PremiumRichTextEditor';
 
 export const AdminProductFormPage = () => {
   const { products, categories, brands, refreshProducts, showToast } = useStore();
@@ -110,7 +111,10 @@ export const AdminProductFormPage = () => {
 
           <div style={{ gridColumn: '1 / -1' }}>
             <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Description</label>
-            <textarea required placeholder="Detailed product description..." value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="form-input" rows={4}></textarea>
+            <PremiumRichTextEditor 
+              value={formData.description} 
+              onChange={(val) => setFormData({...formData, description: val})} 
+            />
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', gridColumn: '1 / -1', marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid #E2E8F0' }}>
