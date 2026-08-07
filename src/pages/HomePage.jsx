@@ -89,7 +89,13 @@ export const HomePage = () => {
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                  <div className="category-icon-wrapper"><Icon /></div>
+                  <div className="category-icon-wrapper">
+                    {c.imageUrl ? (
+                      <img src={c.imageUrl} alt={c.name} className="category-custom-img" />
+                    ) : (
+                      <Icon />
+                    )}
+                  </div>
                   <h3 className="category-title">{c.name}</h3>
                   <span className="category-subtitle">Explore {c.name}</span>
                 </motion.div>
@@ -107,8 +113,12 @@ export const HomePage = () => {
           </div>
           <div className="brands-grid">
             {brands.map(b => (
-              <div key={b.name} className="brand-chip" onClick={() => navigateTo('products', { brand: b.name })}>
-                {b.name}
+              <div key={b.id || b.name} className="brand-chip" onClick={() => navigateTo('products', { brand: b.name })}>
+                {b.logoUrl ? (
+                  <img src={b.logoUrl} alt={b.name} className="brand-chip-img" />
+                ) : (
+                  <span>{b.name}</span>
+                )}
               </div>
             ))}
           </div>

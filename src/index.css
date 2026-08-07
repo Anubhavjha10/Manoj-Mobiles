@@ -793,6 +793,14 @@ img {
   margin-bottom: 0.75rem;
   font-size: 1.5rem;
   transition: transform var(--transition-fast);
+  overflow: hidden;
+}
+
+.category-custom-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .category-card:hover .category-icon-wrapper {
@@ -824,23 +832,33 @@ img {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 1.5rem;
+  gap: 1rem;
   overflow-x: auto;
   padding: 0.5rem 0;
   scrollbar-width: none;
 }
 
 .brand-chip {
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1.25rem;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
-  background: var(--bg-subtle);
+  background: #FFFFFF;
   font-weight: 800;
-  font-size: 1.05rem;
-  color: var(--text-dark);
+  color: var(--secondary-blue);
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.brand-chip-img {
+  max-height: 28px;
+  max-width: 90px;
+  object-fit: contain;
 }
 
 .brand-chip:hover {
@@ -848,6 +866,7 @@ img {
   color: var(--primary);
   background: var(--primary-light);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 86, 210, 0.12);
 }
 
 .deals-section {

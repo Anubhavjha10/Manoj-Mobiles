@@ -3,7 +3,7 @@ import { adminService } from '../../services/adminService';
 import { useStore } from '../../context/StoreContext';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { PremiumImageUpload } from './PremiumImageUpload';
 import { PremiumRichTextEditor } from './PremiumRichTextEditor';
 
 export const AdminCategoryModal = () => {
@@ -13,13 +13,13 @@ export const AdminCategoryModal = () => {
   const isEditing = !!id;
 
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ name: '', description: '', parentId: '' });
+  const [formData, setFormData] = useState({ name: '', description: '', parentId: '', imageUrl: '' });
 
   useEffect(() => {
     if (isEditing) {
       const cat = categories.find(c => c.id === id);
       if (cat) {
-        setFormData({ name: cat.name || '', description: cat.description || '', parentId: cat.parentId || '' });
+        setFormData({ name: cat.name || '', description: cat.description || '', parentId: cat.parentId || '', imageUrl: cat.imageUrl || '' });
       } else {
         showToast('Category not found');
         navigate('/admin/categories');
@@ -76,6 +76,15 @@ export const AdminCategoryModal = () => {
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
+          </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Category Image / Icon</label>
+            <PremiumImageUpload 
+              value={formData.imageUrl} 
+              onChange={(url) => setFormData({ ...formData, imageUrl: url })} 
+              onUploadError={showToast} 
+              folder="categories" 
+            />
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Description</label>
