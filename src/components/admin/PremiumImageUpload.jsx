@@ -124,7 +124,7 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError }) => {
             border: `2px dashed ${isDragging ? '#3B82F6' : '#CBD5E1'}`,
             borderRadius: '12px',
             backgroundColor: isDragging ? 'rgba(59, 130, 246, 0.05)' : '#F8FAFC',
-            padding: '2.5rem 1.5rem',
+            padding: '1.5rem 1rem',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',

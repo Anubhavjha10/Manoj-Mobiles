@@ -317,13 +317,13 @@ const ImageModal = ({ variant, onClose }) => {
 
   return (
     <div className="modal-overlay" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, borderRadius: '16px' }}>
-      <div className="modal-content admin-form-box" style={{ width: '600px', margin: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h3 className="form-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}><ImageIcon className="title-icon" /> Manage Images</h3>
+      <div className="modal-content admin-form-box" style={{ width: '600px', margin: 0, padding: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h3 className="form-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.15rem' }}><ImageIcon className="title-icon" /> Manage Images</h3>
           <button onClick={onClose} className="icon-btn" style={{ border: 'none' }}><X size={20} /></button>
         </div>
         
-        <div className="mb-6">
+        <div className="mb-4">
           <PremiumImageUpload 
             value={url} 
             onChange={setUrl} 
@@ -334,12 +334,12 @@ const ImageModal = ({ variant, onClose }) => {
             onClick={handleAdd} 
             className="btn btn-primary" 
             disabled={loading || !url} 
-            style={{ width: '100%', marginTop: '1rem', height: '42px' }}
+            style={{ width: '100%', marginTop: '0.75rem', height: '38px' }}
           >
             {loading ? 'Adding Image...' : 'Add Image to Variant'}
           </button>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', minHeight: '120px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', minHeight: '90px' }}>
           {images.map((img, i) => (
             <div key={i} style={{ position: 'relative', border: '1px solid #E2E8F0', borderRadius: '8px', overflow: 'hidden', padding: '0.25rem' }}>
               <img src={img} alt="Variant" style={{ width: '100%', height: '90px', objectFit: 'contain' }} />

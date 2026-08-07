@@ -56,20 +56,20 @@ export const AdminBrandModal = () => {
 
   return (
     <div className="modal-overlay" style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, background: 'rgba(15, 23, 42, 0.4)' }}>
-      <div className="modal-content" style={{ backgroundColor: 'white', width: '95%', maxWidth: '600px', borderRadius: '16px', padding: '2rem', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-        <button onClick={handleClose} className="icon-btn" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', border: 'none', background: '#F1F5F9', color: '#475569' }}><X size={20} /></button>
+      <div className="modal-content" style={{ backgroundColor: 'white', width: '95%', maxWidth: '600px', borderRadius: '16px', padding: '1.5rem', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+        <button onClick={handleClose} className="icon-btn" style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', border: 'none', background: '#F1F5F9', color: '#475569' }}><X size={20} /></button>
         
-        <h3 className="form-title" style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem' }}>
+        <h3 className="form-title" style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1.15rem' }}>
           {isEditing ? 'Edit Brand' : 'Create New Brand'}
         </h3>
         
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Brand Name</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Brand Name</label>
             <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="e.g. Apple" required className="form-input" />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Brand Logo</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Brand Logo</label>
             <PremiumImageUpload 
               value={formData.logoUrl} 
               onChange={handleImageChange} 
@@ -77,10 +77,10 @@ export const AdminBrandModal = () => {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Description</label>
-            <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Brand description..." className="form-input" rows={3}></textarea>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Description</label>
+            <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Brand description..." className="form-input" rows={2}></textarea>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
             <button type="button" className="btn btn-outline" onClick={handleClose}>Cancel</button>
             <button type="submit" disabled={loading} className="btn btn-primary">{loading ? 'Saving...' : 'Save Brand'}</button>
           </div>
