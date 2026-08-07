@@ -782,18 +782,19 @@ img {
 }
 
 .category-icon-wrapper {
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   background: var(--primary-light);
   color: var(--primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.75rem;
-  font-size: 1.5rem;
+  margin-bottom: 0.85rem;
+  font-size: 1.8rem;
   transition: transform var(--transition-fast);
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 86, 210, 0.08);
 }
 
 .category-custom-img {
@@ -810,19 +811,19 @@ img {
 }
 
 .category-title {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-dark);
   margin-bottom: 0.2rem;
 }
 
 .category-subtitle {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
 .brands-section {
-  padding: 1.5rem 0 2.5rem;
+  padding: 2rem 0 3rem;
   background: #FFFFFF;
   border-top: 1px solid var(--border-light);
   border-bottom: 1px solid var(--border-light);
@@ -832,18 +833,19 @@ img {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 1rem;
+  gap: 1.25rem;
   overflow-x: auto;
-  padding: 0.5rem 0;
+  padding: 0.75rem 0.25rem;
   scrollbar-width: none;
 }
 
 .brand-chip {
-  padding: 0.6rem 1.25rem;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  border: 1.5px solid var(--border-light);
+  border-radius: 14px;
   background: #FFFFFF;
   font-weight: 800;
+  font-size: 1.15rem;
   color: var(--secondary-blue);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -851,22 +853,26 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  min-height: 80px;
+  min-width: 160px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .brand-chip-img {
-  max-height: 28px;
-  max-width: 90px;
+  max-height: 56px;
+  max-width: 135px;
+  width: auto;
+  height: auto;
   object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.05));
 }
 
 .brand-chip:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 86, 210, 0.12);
+  background: #FFFFFF;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 86, 210, 0.15);
 }
 
 .deals-section {
