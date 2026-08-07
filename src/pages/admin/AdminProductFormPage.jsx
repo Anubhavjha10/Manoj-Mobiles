@@ -110,9 +110,9 @@ export const AdminProductFormPage = () => {
            sku: formData.sku,
            mrp: parseFloat(formData.mrp),
            sellingPrice: parseFloat(formData.sellingPrice),
-           gstPercentage: parseFloat(formData.gstPercentage),
-           stockQuantity: parseInt(formData.stockQuantity),
-           isCodAvailable: formData.isCodAvailable
+           gstPercent: parseFloat(formData.gstPercentage),
+           stockQty: parseInt(formData.stockQuantity),
+           codAvailable: formData.isCodAvailable
         };
         const variantRes = await adminService.createVariant(variantPayload);
         const variantId = variantRes?.data?.id || variantRes?.id;
@@ -124,7 +124,13 @@ export const AdminProductFormPage = () => {
             }
 
             // Step 4: Attach Specs
-            const validSpecs = formData.specifications.filter(s => s.key && s.value);
+            const validSpecs = formData.specifications
+              .filter(s => s.key && s.value)
+              .map(s => ({
+                specGroup: s.group || 'General',
+                specKey: s.key,
+                specValue: s.value
+              }));
             if (validSpecs.length > 0) {
                await adminService.addVariantSpecifications(variantId, validSpecs);
             }
