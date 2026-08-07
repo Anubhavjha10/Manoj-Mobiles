@@ -1,20 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { productService } from '../services/productService';
 
 const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
-  const [activeView, setActiveView] = useState(() => {
-    const path = window.location.pathname;
-    if (path.startsWith('/admin')) {
-      if (path === '/admin' || path === '/admin/') return 'admin-dashboard';
-      if (path === '/admin/login') return 'admin-login';
-      const view = path.split('/admin/')[1];
-      return `admin-${view}`;
-    }
-    return sessionStorage.getItem('mm_active_view') || 'home';
-  });
-  const [previousView, setPreviousView] = useState('home');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [selectedProductId, setSelectedProductId] = useState('m1');
   const [filters, setFilters] = useState({
     search: '',
@@ -49,19 +41,6 @@ export const StoreProvider = ({ children }) => {
 
   useEffect(() => {
     loadData();
-
-    const handlePopState = () => {
-      const path = window.location.pathname;
-      if (path.startsWith('/admin')) {
-        if (path === '/admin' || path === '/admin/') setActiveView('admin-dashboard');
-        else if (path === '/admin/login') setActiveView('admin-login');
-        else setActiveView(`admin-${path.split('/admin/')[1]}`);
-      } else {
-        setActiveView(sessionStorage.getItem('mm_active_view') || 'home');
-      }
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const [cart, setCart] = useState(() => {
@@ -125,12 +104,6 @@ export const StoreProvider = ({ children }) => {
     localStorage.setItem('mm_admin_user', JSON.stringify(adminUser));
   }, [adminUser]);
 
-  useEffect(() => {
-    if (!activeView.startsWith('admin-')) {
-      sessionStorage.setItem('mm_active_view', activeView);
-    }
-  }, [activeView]);
-
   const showToast = (message) => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message }]);
@@ -140,27 +113,27 @@ export const StoreProvider = ({ children }) => {
   };
 
   const navigateTo = (view, params = {}) => {
-    if (view !== activeView) {
-      setPreviousView(activeView);
-      setActiveView(view);
+    // Convert old activeView to valid routes
+    let route = view === 'home' ? '/' : `/${view}`;
+    
+    // Map params to URL search params or paths
+    let searchParams = new URLSearchParams();
+    if (params.productId && view === 'product-detail') {
+      route = `/product/${params.productId}`;
     }
-    if (params.productId) setSelectedProductId(params.productId);
-    if (params.category) setFilters(f => ({ ...f, category: params.category }));
-    if (params.brand) setFilters(f => ({ ...f, brand: params.brand }));
-    if (params.search !== undefined) setFilters(f => ({ ...f, search: params.search }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (params.category) searchParams.append('category', params.category);
+    if (params.brand) searchParams.append('brand', params.brand);
+    if (params.search) searchParams.append('search', params.search);
+
+    const queryString = searchParams.toString();
+    if (queryString) route += `?${queryString}`;
+
+    navigate(route);
   };
 
   const navigateAdminTo = (adminView) => {
     const path = adminView.replace('admin-', '');
-    const fullViewName = `admin-${path}`;
-    
-    if (fullViewName !== activeView) {
-      setPreviousView(activeView);
-      setActiveView(fullViewName);
-      window.history.pushState({}, '', `/admin/${path}`);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(`/admin/${path}`);
   };
 
   const addToCart = (productId, qty = 1, color = null, storage = null) => {
@@ -226,14 +199,16 @@ export const StoreProvider = ({ children }) => {
 
   return (
     <StoreContext.Provider value={{
-      activeView, previousView, navigateTo,
+      navigateTo, navigateAdminTo,
+      activeView: location.pathname, // Mock activeView for legacy components
+      previousView: '/',
       selectedProductId, setSelectedProductId,
       filters, setFilters,
       products, setProducts, refreshProducts: loadData, categories, brands, loadingProducts,
       cart, addToCart, updateCartQty, removeFromCart,
       wishlist, toggleWishlist,
       user, setUser,
-      adminUser, setAdminUser, navigateAdminTo,
+      adminUser, setAdminUser,
       aiWizard, setAiWizard,
       appliedCoupon, applyCoupon,
       toasts, showToast,

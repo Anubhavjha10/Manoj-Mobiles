@@ -1,18 +1,23 @@
 import React from 'react';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import { motion } from 'framer-motion';
 
 export const ProductCard = ({ product }) => {
   const { wishlist, toggleWishlist, addToCart, navigateTo, formatINR } = useStore();
   const isWishlisted = wishlist.includes(product.id);
 
   return (
-    <div className="product-card">
+    <motion.div 
+      className="product-card"
+      whileHover={{ y: -4, boxShadow: "var(--shadow-hover)" }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+    >
       <div className="card-image-wrapper">
         {product.badge && <span className="badge badge-solid card-badge-top">{product.badge}</span>}
         <button 
           className={`wishlist-btn-overlay ${isWishlisted ? 'active' : ''}`}
-          onClick={() => toggleWishlist(product.id)}
+          onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
         >
           <Heart size={18} fill={isWishlisted ? '#EF4444' : 'none'} color={isWishlisted ? '#EF4444' : 'currentColor'} />
         </button>
@@ -32,22 +37,29 @@ export const ProductCard = ({ product }) => {
           {product.name}
         </h3>
         <div className="card-rating-row">
-          <div className="rating-stars">
+          <div className="rating-stars" style={{ color: '#F59E0B' }}>
             {'★'.repeat(Math.floor(product.rating))}{'☆'.repeat(5 - Math.floor(product.rating))}
           </div>
           <span className="rating-text">{product.rating} ({product.reviewsCount})</span>
         </div>
         <div className="card-price-row">
           <span className="price-current">{formatINR(product.price)}</span>
-          <span className="price-original">{formatINR(product.originalPrice)}</span>
-          <span className="price-discount-tag">{product.discount}</span>
+          {product.originalPrice > product.price && (
+            <span className="price-original">{formatINR(product.originalPrice)}</span>
+          )}
+          {product.discount && <span className="price-discount-tag">{product.discount}</span>}
         </div>
         <div className="card-actions">
-          <button className="btn btn-primary btn-sm" onClick={() => addToCart(product.id)}>
+          <motion.button 
+            whileTap={{ scale: 0.95 }}
+            className="btn btn-primary btn-sm" 
+            style={{ width: '100%', display: 'flex', gap: '0.4rem', justifyContent: 'center' }}
+            onClick={() => addToCart(product.id)}
+          >
             <ShoppingBag size={16} /> Add to Cart
-          </button>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

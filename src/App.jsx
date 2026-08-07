@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useStore } from './context/StoreContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { VideoModal } from './components/VideoModal';
 import { Toast } from './components/Toast';
 import { BottomNav } from './components/BottomNav';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { HomePage } from './pages/HomePage';
 import { ProductListingPage } from './pages/ProductListingPage';
@@ -27,93 +29,89 @@ import { AdminReturnsPage } from './pages/admin/AdminReturnsPage';
 import { AdminDeliveryAgentsPage } from './pages/admin/AdminDeliveryAgentsPage';
 import { AdminCatalogPage } from './pages/admin/AdminCatalogPage';
 
+const PageTransition = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 15 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -15 }}
+    transition={{ duration: 0.3, ease: "easeInOut" }}
+  >
+    {children}
+  </motion.div>
+);
+
+const AdminProtectedRoute = ({ children }) => {
+  const { adminUser } = useStore();
+  if (!adminUser?.loggedIn) {
+    return <Navigate to="/admin/login" replace />;
+  }
+  return children;
+};
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 export const App = () => {
-  const { activeView, adminUser } = useStore();
-
-  const renderCurrentView = () => {
-    switch (activeView) {
-      case 'home':
-        return <HomePage />;
-      case 'products':
-        return <ProductListingPage />;
-      case 'product-detail':
-        return <ProductDetailPage />;
-      case 'cart':
-        return <CartPage />;
-      case 'wishlist':
-        return <WishlistPage />;
-      case 'checkout':
-        return <CheckoutPage />;
-      case 'order-confirmation':
-        return <OrderConfirmationPage />;
-      case 'track-order':
-        return <TrackOrderPage />;
-      case 'store-locator':
-        return <StoreLocatorPage />;
-      case 'account':
-        return <AccountPage />;
-      default:
-        return <HomePage />;
-    }
-  };
-
-  const renderAdminView = () => {
-    // If not logged in, force login page regardless of activeView
-    if (!adminUser?.loggedIn && activeView !== 'admin-login') {
-      window.history.replaceState({}, '', '/admin/login');
-      return <AdminLoginPage />;
-    }
-    
-    switch (activeView) {
-      case 'admin-login':
-        return <AdminLoginPage />;
-      case 'admin-dashboard':
-        return <AdminDashboardPage />;
-      case 'admin-orders':
-        return <AdminOrdersPage />;
-      case 'admin-products':
-        return <AdminProductsPage />;
-      case 'admin-users':
-        return <AdminUsersPage />;
-      case 'admin-returns':
-        return <AdminReturnsPage />;
-      case 'admin-delivery-agents':
-        return <AdminDeliveryAgentsPage />;
-      case 'admin-catalog':
-        return <AdminCatalogPage />;
-      default:
-        return <AdminDashboardPage />;
-    }
-  };
-
-  const isAdminRoute = activeView.startsWith('admin');
+  const location = useLocation();
 
   return (
     <div className="app-root">
-      {isAdminRoute ? (
-        (!adminUser?.loggedIn || activeView === 'admin-login') ? (
+      <ScrollToTop />
+      <Routes location={location} key={location.pathname}>
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        
+        <Route path="/admin" element={
+          <AdminProtectedRoute>
+            <AdminLayout />
+          </AdminProtectedRoute>
+        }>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboardPage />} />
+          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="returns" element={<AdminReturnsPage />} />
+          <Route path="delivery-agents" element={<AdminDeliveryAgentsPage />} />
+          <Route path="catalog" element={<AdminCatalogPage />} />
+        </Route>
+
+        {/* Customer Routes */}
+        <Route path="/*" element={
           <>
-            <AdminLoginPage />
-            <Toast />
+            <Navbar />
+            <main id="app-content">
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route index element={<PageTransition><HomePage /></PageTransition>} />
+                  <Route path="products" element={<PageTransition><ProductListingPage /></PageTransition>} />
+                  <Route path="product/:id" element={<PageTransition><ProductDetailPage /></PageTransition>} />
+                  <Route path="cart" element={<PageTransition><CartPage /></PageTransition>} />
+                  <Route path="wishlist" element={<PageTransition><WishlistPage /></PageTransition>} />
+                  <Route path="checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
+                  <Route path="order-confirmation" element={<PageTransition><OrderConfirmationPage /></PageTransition>} />
+                  <Route path="track-order" element={<PageTransition><TrackOrderPage /></PageTransition>} />
+                  <Route path="store-locator" element={<PageTransition><StoreLocatorPage /></PageTransition>} />
+                  <Route path="account" element={<PageTransition><AccountPage /></PageTransition>} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </AnimatePresence>
+            </main>
+            <Footer />
+            <VideoModal />
+            <BottomNav />
           </>
-        ) : (
-          <AdminLayout currentPath={activeView.replace('admin-', '')}>
-            {renderAdminView()}
-            <Toast />
-          </AdminLayout>
-        )
-      ) : (
-        <>
-          <Navbar />
-          <main id="app-content">
-            {renderCurrentView()}
-          </main>
-          <Footer />
-          <VideoModal />
-          <Toast />
-          <BottomNav />
-        </>
-      )}
+        } />
+        
+        {/* Fallback for Customer Routes */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <Toast />
     </div>
   );
 };

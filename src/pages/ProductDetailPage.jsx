@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Heart, ArrowLeft, Share2, ShieldCheck, Truck, Check } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { ProductCard } from '../components/ProductCard';
 
 export const ProductDetailPage = () => {
-  const { selectedProductId, addToCart, toggleWishlist, wishlist, cart, navigateTo, previousView, formatINR, products } = useStore();
-  const p = products.find(item => item.id === selectedProductId || item.id === Number(selectedProductId)) || products[0] || {};
+  const { id } = useParams();
+  const { addToCart, toggleWishlist, wishlist, cart, navigateTo, previousView, formatINR, products } = useStore();
+  const p = products.find(item => String(item.id) === String(id) || item.slug === id) || products[0] || {};
   const related = products.filter(item => item.category === p.category && item.id !== p.id).slice(0, 4);
 
   const [activeImg, setActiveImg] = useState(p.image);

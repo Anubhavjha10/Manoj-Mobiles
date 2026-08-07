@@ -5,6 +5,12 @@ import { VIDEOS_DATA, TESTIMONIALS_DATA } from '../data/products';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { ProductCard } from '../components/ProductCard';
 import { AiMobileFinder } from '../components/AiMobileFinder';
+import { motion } from 'framer-motion';
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+};
 
 // Isolated Countdown Timer Component to prevent main-thread re-renders
 const CountdownTimer = () => {
@@ -52,7 +58,11 @@ export const HomePage = () => {
       <HeroCarousel />
 
       {/* SHOP BY CATEGORY */}
-      <section className="category-section">
+      <motion.section 
+        className="category-section"
+        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+        variants={fadeUpVariant}
+      >
         <div className="container">
           <div className="section-heading">
             <div>
@@ -72,16 +82,22 @@ export const HomePage = () => {
               if (c.name.includes('Accessories')) Icon = ShieldCheck;
               
               return (
-                <div key={c.id || idx} className="category-card" onClick={() => navigateTo('products', { category: c.name })}>
+                <motion.div 
+                  key={c.id || idx} 
+                  className="category-card" 
+                  onClick={() => navigateTo('products', { category: c.name })}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
                   <div className="category-icon-wrapper"><Icon /></div>
                   <h3 className="category-title">{c.name}</h3>
                   <span className="category-subtitle">Explore {c.name}</span>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* SHOP BY BRAND */}
       <section className="brands-section">
@@ -100,7 +116,11 @@ export const HomePage = () => {
       </section>
 
       {/* DAILY DEALS */}
-      <section className="deals-section">
+      <motion.section 
+        className="deals-section"
+        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+        variants={fadeUpVariant}
+      >
         <div className="container">
           <div className="deal-header-box">
             <div className="deal-header-title">
@@ -113,13 +133,17 @@ export const HomePage = () => {
             {dailyDeals.map(p => <ProductCard key={p.id} product={p} />)}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* AI MOBILE FINDER */}
       <AiMobileFinder />
 
       {/* PROMOTIONAL VIDEOS */}
-      <section className="video-section">
+      <motion.section 
+        className="video-section"
+        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+        variants={fadeUpVariant}
+      >
         <div className="container">
           <div className="section-heading">
             <div>
@@ -130,7 +154,13 @@ export const HomePage = () => {
 
           <div className="video-carousel-wrapper">
             {VIDEOS_DATA.map(v => (
-              <div key={v.id} className="video-card" onClick={() => setActiveVideo(v)}>
+              <motion.div 
+                key={v.id} 
+                className="video-card" 
+                onClick={() => setActiveVideo(v)}
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
                 <img src={v.thumbnail} className="video-thumb" alt={v.title} />
                 <div className="video-overlay">
                   <span className="badge badge-solid" style={{ width: 'fit-content' }}>{v.duration}</span>
@@ -140,11 +170,11 @@ export const HomePage = () => {
                     <span className="video-info-meta">👀 {v.views} views</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* TRENDING PRODUCTS */}
       <section className="deals-section" style={{ background: '#FFFFFF' }}>
