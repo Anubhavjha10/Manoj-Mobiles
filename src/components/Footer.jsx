@@ -11,13 +11,14 @@ export const Footer = () => {
         <div className="footer-grid">
           {/* Col 1 */}
           <div>
-            <div className="brand-logo" style={{ marginBottom: '1rem' }}>
-              <div className="brand-icon-box" style={{ background: '#FFFFFF', color: 'var(--primary)' }}>
-                <Smartphone size={24} />
-              </div>
-              <div className="brand-text-container">
-                <span className="brand-name" style={{ color: '#FFFFFF' }}>MANOJ <span>MOBILES</span></span>
-                <span className="brand-tagline" style={{ color: '#94A3B8' }}>AUTHORIZED TECH RETAILER</span>
+            <div className="footer-brand-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
+              <Smartphone size={28} strokeWidth={2.5} color="#38bdf8" />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '1.35rem', fontWeight: 900, letterSpacing: '-0.5px', lineHeight: '1.1' }}>
+                  <span style={{ color: '#FFFFFF' }}>MANOJ</span>
+                  <span style={{ color: '#38bdf8' }}>MOBILES</span>
+                </div>
+                <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#94A3B8', letterSpacing: '0.5px', marginTop: '0.15rem' }}>AUTHORIZED TECH RETAILER</span>
               </div>
             </div>
             <p style={{ marginBottom: '1rem', lineHeight: '1.6' }}>

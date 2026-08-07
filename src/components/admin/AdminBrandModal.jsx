@@ -46,7 +46,8 @@ export const AdminBrandModal = () => {
       refreshBrands();
       navigate('/admin/brands');
     } catch (err) {
-      showToast(isEditing ? 'Failed to update' : 'Failed to create');
+      console.error('Save brand error:', err);
+      showToast(err.message || (isEditing ? 'Failed to update brand' : 'Failed to create brand'));
     } finally {
       setLoading(false);
     }
@@ -76,6 +77,7 @@ export const AdminBrandModal = () => {
               value={formData.logoUrl} 
               onChange={handleImageChange} 
               onUploadError={showToast} 
+              folder="brands"
             />
           </div>
           <div style={{ gridColumn: '1 / -1' }}>

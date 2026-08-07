@@ -2,11 +2,12 @@ import React, { useState, useRef } from 'react';
 import { UploadCloud, Link as LinkIcon, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 
-export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = '' }) => {
+export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'general' }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [inputMode, setInputMode] = useState('upload'); // 'upload' or 'url'
   const [urlInput, setUrlInput] = useState(value || '');
+  const [localPreview, setLocalPreview] = useState(null);
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -40,15 +41,23 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = ''
       return;
     }
     
+    // Create instant local preview object URL
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreview(objectUrl);
     setIsUploading(true);
+
     try {
-      // Assuming adminService.uploadImage returns a plain string URL
       const secureUrl = await adminService.uploadImage(file, folder);
-      const url = typeof secureUrl === 'string' ? secureUrl : secureUrl.url;
-      onChange(url);
-      setUrlInput(url);
+      const url = typeof secureUrl === 'string' ? secureUrl : (secureUrl?.data || secureUrl?.url || secureUrl?.secure_url || '');
+      if (url) {
+        onChange(url);
+        setUrlInput(url);
+      } else {
+        throw new Error("Invalid URL returned from server");
+      }
     } catch (error) {
       console.error("Upload error:", error);
+      setLocalPreview(null);
       if (onUploadError) onUploadError("Failed to upload image.");
     } finally {
       setIsUploading(false);
@@ -59,32 +68,49 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = ''
     e.preventDefault();
     if (urlInput.trim()) {
       onChange(urlInput.trim());
+      setLocalPreview(null);
     }
   };
 
   const clearImage = () => {
     onChange('');
     setUrlInput('');
+    setLocalPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
-  // If we already have a valid image URL, show the preview
-  if (value) {
+  const activeImage = value || localPreview;
+
+  // If we have an active image (either uploaded or local preview), show the preview and hide the dropzone!
+  if (activeImage) {
     return (
-      <div style={{ position: 'relative', border: '1px solid #E2E8F0', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#F8FAFC', padding: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <img 
-          src={value} 
-          alt="Preview" 
-          style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: '8px' }} 
-          onError={(e) => { e.target.src = 'https://placehold.co/400x400/F1F5F9/94A3B8?text=Invalid+Image'; }}
-        />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: '0.5rem', padding: '0 0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10B981', fontSize: '0.85rem', fontWeight: 500 }}>
-            <CheckCircle size={14} /> Uploaded
+      <div style={{ position: 'relative', border: '1px solid #E2E8F0', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#F8FAFC', padding: '0.75rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <img 
+            src={activeImage} 
+            alt="Preview" 
+            style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: '8px', opacity: isUploading ? 0.6 : 1 }} 
+            onError={(e) => { e.target.src = 'https://placehold.co/400x400/F1F5F9/94A3B8?text=Invalid+Image'; }}
+          />
+          {isUploading && (
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.7)', borderRadius: '8px', gap: '0.5rem' }}>
+              <Loader2 size={32} className="lucide-spin" style={{ animation: 'spin 1s linear infinite', color: '#3B82F6' }} />
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1E40AF' }}>Uploading to Cloud...</span>
+            </div>
+          )}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: '0.5rem', padding: '0 0.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: isUploading ? '#3B82F6' : '#10B981', fontSize: '0.85rem', fontWeight: 600 }}>
+            {isUploading ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={14} />} 
+            {isUploading ? 'Uploading...' : 'Uploaded Successfully'}
           </div>
           <button 
             type="button" 
             onClick={clearImage}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(239, 68, 68, 0.1)', color: '#EF4444', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+            disabled={isUploading}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(239, 68, 68, 0.1)', color: '#EF4444', border: 'none', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: isUploading ? 'not-allowed' : 'pointer' }}
           >
             <X size={12} /> Remove
           </button>

@@ -263,9 +263,8 @@ export const adminService = {
       formData.append('file', file);
       
       const query = folder ? `?folder=${encodeURIComponent(folder)}` : '';
-      // Returns a string URL
       const response = await api.postFormData(`/admin/upload${query}`, formData);
-      return response;
+      return response.data || response.url || response;
     } catch (error) {
       console.error('Error uploading image:', error);
       throw error;
