@@ -1,10 +1,9 @@
 import React from 'react';
 import { CheckCircle } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 
 export const CheckoutPage = () => {
-  const { cart, user, navigateTo, formatINR } = useStore();
+  const { cart, user, navigateTo, formatINR, products } = useStore();
 
   const handlePlaceOrder = (e) => {
     e.preventDefault();
@@ -56,7 +55,7 @@ export const CheckoutPage = () => {
         <div className="order-summary-box">
           <h3 style={{ fontWeight: 800, marginBottom: '1rem' }}>Order Items</h3>
           {cart.map((item, idx) => {
-            const p = PRODUCTS_DATA.find(prod => prod.id === item.productId);
+            const p = products.find(prod => prod.id === item.productId || prod.id === Number(item.productId));
             if (!p) return null;
             return (
               <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>

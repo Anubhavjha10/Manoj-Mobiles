@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { ShoppingCart, ArrowRight } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 
 export const CartPage = () => {
-  const { cart, updateCartQty, removeFromCart, appliedCoupon, applyCoupon, navigateTo, formatINR } = useStore();
+  const { cart, updateCartQty, removeFromCart, appliedCoupon, applyCoupon, navigateTo, formatINR, products } = useStore();
   const [couponInput, setCouponInput] = useState('');
 
   if (cart.length === 0) {
@@ -22,7 +21,7 @@ export const CartPage = () => {
 
   let subtotal = 0;
   cart.forEach(item => {
-    const p = PRODUCTS_DATA.find(prod => prod.id === item.productId);
+    const p = products.find(prod => prod.id === item.productId || prod.id === Number(item.productId));
     if (p) subtotal += p.price * item.qty;
   });
 
@@ -35,7 +34,7 @@ export const CartPage = () => {
       <div className="cart-layout">
         <div className="cart-items-box">
           {cart.map((item, idx) => {
-            const p = PRODUCTS_DATA.find(prod => prod.id === item.productId);
+            const p = products.find(prod => prod.id === item.productId || prod.id === Number(item.productId));
             if (!p) return null;
             const itemTotal = p.price * item.qty;
 

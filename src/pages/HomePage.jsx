@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Grid, Smartphone, Apple, Watch, Headphones, BatteryCharging, ShieldCheck, Award, Flame, PlayCircle, Play, TrendingUp, CheckCircle2, Truck, RefreshCw, CreditCard, Store, Heart, ChevronRight } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA, BRANDS_DATA, VIDEOS_DATA, TESTIMONIALS_DATA } from '../data/products';
+import { VIDEOS_DATA, TESTIMONIALS_DATA } from '../data/products';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { ProductCard } from '../components/ProductCard';
 import { AiMobileFinder } from '../components/AiMobileFinder';
@@ -35,11 +35,11 @@ const CountdownTimer = () => {
 };
 
 export const HomePage = () => {
-  const { navigateTo, setActiveVideo, showToast, formatINR } = useStore();
+  const { navigateTo, setActiveVideo, showToast, formatINR, products, categories, brands } = useStore();
 
-  const dailyDeals = useMemo(() => PRODUCTS_DATA.filter(p => p.isDeal).slice(0, 8), []);
-  const trendingProducts = useMemo(() => PRODUCTS_DATA.filter(p => p.isTrending).slice(0, 6), []);
-  const appleProducts = useMemo(() => PRODUCTS_DATA.filter(p => p.isAppleSpotlight), []);
+  const dailyDeals = useMemo(() => products.filter(p => p.isDeal).slice(0, 8), [products]);
+  const trendingProducts = useMemo(() => products.filter(p => p.isTrending).slice(0, 6), [products]);
+  const appleProducts = useMemo(() => products.filter(p => p.isAppleSpotlight), [products]);
 
   const handleNewsletter = (e) => {
     e.preventDefault();
@@ -62,41 +62,23 @@ export const HomePage = () => {
           </div>
 
           <div className="category-grid">
-            <div className="category-card" onClick={() => navigateTo('products', { category: 'Mobiles' })}>
-              <div className="category-icon-wrapper"><Smartphone /></div>
-              <h3 className="category-title">Mobiles</h3>
-              <span className="category-subtitle">240+ Flagships & 5G</span>
-            </div>
-
-            <div className="category-card" onClick={() => navigateTo('products', { category: 'Apple' })}>
-              <div className="category-icon-wrapper"><Apple /></div>
-              <h3 className="category-title">Apple Zone</h3>
-              <span className="category-subtitle">iPhones, iPad & Mac</span>
-            </div>
-
-            <div className="category-card" onClick={() => navigateTo('products', { category: 'Wearables' })}>
-              <div className="category-icon-wrapper"><Watch /></div>
-              <h3 className="category-title">Smartwatches</h3>
-              <span className="category-subtitle">110+ Models & Bands</span>
-            </div>
-
-            <div className="category-card" onClick={() => navigateTo('products', { category: 'Audio' })}>
-              <div className="category-icon-wrapper"><Headphones /></div>
-              <h3 className="category-title">Audio & TWS</h3>
-              <span className="category-subtitle">180+ Earbuds & ANC</span>
-            </div>
-
-            <div className="category-card" onClick={() => navigateTo('products', { category: 'Chargers & Cables' })}>
-              <div className="category-icon-wrapper"><BatteryCharging /></div>
-              <h3 className="category-title">Fast Chargers</h3>
-              <span className="category-subtitle">95+ GaN & MagSafe</span>
-            </div>
-
-            <div className="category-card" onClick={() => navigateTo('products', { category: 'Accessories' })}>
-              <div className="category-icon-wrapper"><ShieldCheck /></div>
-              <h3 className="category-title">Accessories</h3>
-              <span className="category-subtitle">350+ Cases & Guards</span>
-            </div>
+            {categories.slice(0, 6).map((c, idx) => {
+              let Icon = Grid;
+              if (c.name.includes('Mobile')) Icon = Smartphone;
+              if (c.name.includes('Apple')) Icon = Apple;
+              if (c.name.includes('Wearable') || c.name.includes('Watch')) Icon = Watch;
+              if (c.name.includes('Audio')) Icon = Headphones;
+              if (c.name.includes('Charger')) Icon = BatteryCharging;
+              if (c.name.includes('Accessories')) Icon = ShieldCheck;
+              
+              return (
+                <div key={c.id || idx} className="category-card" onClick={() => navigateTo('products', { category: c.name })}>
+                  <div className="category-icon-wrapper"><Icon /></div>
+                  <h3 className="category-title">{c.name}</h3>
+                  <span className="category-subtitle">Explore {c.name}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -108,9 +90,9 @@ export const HomePage = () => {
             <h2 className="section-title"><Award color="#0056D2" /> Authorised Brand Store</h2>
           </div>
           <div className="brands-grid">
-            {BRANDS_DATA.map(b => (
+            {brands.map(b => (
               <div key={b.name} className="brand-chip" onClick={() => navigateTo('products', { brand: b.name })}>
-                {b.logoText}
+                {b.name}
               </div>
             ))}
           </div>

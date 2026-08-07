@@ -17,8 +17,16 @@ import { TrackOrderPage } from './pages/TrackOrderPage';
 import { StoreLocatorPage } from './pages/StoreLocatorPage';
 import { AccountPage } from './pages/AccountPage';
 
+import { AdminLayout } from './components/admin/AdminLayout';
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
+import { AdminProductsPage } from './pages/admin/AdminProductsPage';
+import { AdminUsersPage } from './pages/admin/AdminUsersPage';
+import { AdminReturnsPage } from './pages/admin/AdminReturnsPage';
+
 export const App = () => {
-  const { activeView } = useStore();
+  const { activeView, adminUser } = useStore();
 
   const renderCurrentView = () => {
     switch (activeView) {
@@ -47,16 +55,58 @@ export const App = () => {
     }
   };
 
+  const renderAdminView = () => {
+    // If not logged in, force login page regardless of activeView
+    if (!adminUser?.loggedIn && activeView !== 'admin-login') {
+      return <AdminLoginPage />;
+    }
+    
+    switch (activeView) {
+      case 'admin-login':
+        return <AdminLoginPage />;
+      case 'admin-dashboard':
+        return <AdminDashboardPage />;
+      case 'admin-orders':
+        return <AdminOrdersPage />;
+      case 'admin-products':
+        return <AdminProductsPage />;
+      case 'admin-users':
+        return <AdminUsersPage />;
+      case 'admin-returns':
+        return <AdminReturnsPage />;
+      default:
+        return <AdminDashboardPage />;
+    }
+  };
+
+  const isAdminRoute = activeView.startsWith('admin');
+
   return (
     <div className="app-root">
-      <Navbar />
-      <main id="app-content">
-        {renderCurrentView()}
-      </main>
-      <Footer />
-      <VideoModal />
-      <Toast />
-      <BottomNav />
+      {isAdminRoute ? (
+        activeView === 'admin-login' ? (
+          <>
+            {renderAdminView()}
+            <Toast />
+          </>
+        ) : (
+          <AdminLayout currentPath={activeView.replace('admin-', '')}>
+            {renderAdminView()}
+            <Toast />
+          </AdminLayout>
+        )
+      ) : (
+        <>
+          <Navbar />
+          <main id="app-content">
+            {renderCurrentView()}
+          </main>
+          <Footer />
+          <VideoModal />
+          <Toast />
+          <BottomNav />
+        </>
+      )}
     </div>
   );
 };

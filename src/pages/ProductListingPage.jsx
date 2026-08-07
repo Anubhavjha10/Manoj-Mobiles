@@ -1,11 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { SearchX, Filter, ArrowLeft, X, SlidersHorizontal, ChevronDown, Check } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
 
 export const ProductListingPage = () => {
-  const { filters, setFilters, formatINR } = useStore();
+  const { filters, setFilters, formatINR, products, categories, brands } = useStore();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   // Local draft state for mobile filter drawer
@@ -28,7 +27,7 @@ export const ProductListingPage = () => {
   };
 
   const filtered = useMemo(() => {
-    let result = PRODUCTS_DATA.filter(p => {
+    let result = products.filter(p => {
       const matchCat = filters.category === 'All' || p.category === filters.category || (filters.category === 'Apple' && p.subCategory === 'Apple');
       const matchBrand = filters.brand === 'All' || p.brand === filters.brand;
       const matchSearch = !filters.search || p.name.toLowerCase().includes(filters.search.toLowerCase()) || p.brand.toLowerCase().includes(filters.search.toLowerCase());
@@ -41,7 +40,7 @@ export const ProductListingPage = () => {
     if (filters.sort === 'rating') result.sort((a, b) => b.rating - a.rating);
 
     return result;
-  }, [filters]);
+  }, [filters, products]);
 
   const activeFilterCount = (filters.category !== 'All' ? 1 : 0) + (filters.brand !== 'All' ? 1 : 0) + (filters.maxPrice < 200000 ? 1 : 0) + (filters.search ? 1 : 0);
 
@@ -94,7 +93,7 @@ export const ProductListingPage = () => {
           <div className="filter-group">
             <h3 className="filter-title">Category</h3>
             <div className="filter-checkbox-list">
-              {['All', 'Mobiles', 'Apple', 'Wearables', 'Audio', 'Chargers & Cables', 'Accessories'].map(c => (
+              {['All', ...categories.map(c => c.name)].map(c => (
                 <label key={c} className="filter-checkbox-item">
                   <input 
                     type="radio" 
@@ -111,7 +110,7 @@ export const ProductListingPage = () => {
           <div className="filter-group">
             <h3 className="filter-title">Brand</h3>
             <div className="filter-checkbox-list">
-              {['All', 'Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Vivo', 'Google', 'boAt'].map(b => (
+              {['All', ...brands.map(b => b.name)].map(b => (
                 <label key={b} className="filter-checkbox-item">
                   <input 
                     type="radio" 
@@ -202,7 +201,7 @@ export const ProductListingPage = () => {
               <div className="filter-group">
                 <h4 className="filter-title">Category</h4>
                 <div className="filter-radio-grid">
-                  {['All', 'Mobiles', 'Apple', 'Wearables', 'Audio', 'Chargers & Cables', 'Accessories'].map(c => (
+                  {['All', ...categories.map(c => c.name)].map(c => (
                     <label key={c} className={`filter-radio-chip ${draftFilters.category === c ? 'selected' : ''}`}>
                       <input 
                         type="radio" 
@@ -220,7 +219,7 @@ export const ProductListingPage = () => {
               <div className="filter-group">
                 <h4 className="filter-title">Brand</h4>
                 <div className="filter-radio-grid">
-                  {['All', 'Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Vivo', 'Google', 'boAt'].map(b => (
+                  {['All', ...brands.map(b => b.name)].map(b => (
                     <label key={b} className={`filter-radio-chip ${draftFilters.brand === b ? 'selected' : ''}`}>
                       <input 
                         type="radio" 

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Heart, ArrowLeft, Share2, ShieldCheck, Truck, Check } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
 
 export const ProductDetailPage = () => {
-  const { selectedProductId, addToCart, toggleWishlist, wishlist, cart, navigateTo, previousView, formatINR } = useStore();
-  const p = PRODUCTS_DATA.find(item => item.id === selectedProductId) || PRODUCTS_DATA[0];
-  const related = PRODUCTS_DATA.filter(item => item.category === p.category && item.id !== p.id).slice(0, 4);
+  const { selectedProductId, addToCart, toggleWishlist, wishlist, cart, navigateTo, previousView, formatINR, products } = useStore();
+  const p = products.find(item => item.id === selectedProductId || item.id === Number(selectedProductId)) || products[0] || {};
+  const related = products.filter(item => item.category === p.category && item.id !== p.id).slice(0, 4);
 
   const [activeImg, setActiveImg] = useState(p.image);
   const [selectedColor, setSelectedColor] = useState(p.colors ? p.colors[0] : 'Standard');

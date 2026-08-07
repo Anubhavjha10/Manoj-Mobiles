@@ -1,10 +1,9 @@
 import React, { useState, useMemo, useDeferredValue } from 'react';
 import { Smartphone, Search, MapPin, Package, Heart, ShoppingBag, User, Layers, Apple, Watch, Headphones, Zap, Shield, Flame, PhoneCall, Truck, ArrowRight, Menu, LogOut, UserCheck, PackageCheck, ChevronDown, Tag, Sparkles, RefreshCw, Store } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 
 export const Navbar = () => {
-  const { navigateTo, cart, wishlist, user, setUser, formatINR } = useStore();
+  const { navigateTo, cart, wishlist, user, setUser, formatINR, products, categories } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAutosuggest, setShowAutosuggest] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,8 +15,8 @@ export const Navbar = () => {
   const suggestions = useMemo(() => {
     if (!deferredQuery || deferredQuery.length < 2) return [];
     const q = deferredQuery.toLowerCase();
-    return PRODUCTS_DATA.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)).slice(0, 5);
-  }, [deferredQuery]);
+    return products.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)).slice(0, 5);
+  }, [deferredQuery, products]);
 
   const handleSearchSubmit = (e) => {
     e?.preventDefault();
@@ -234,24 +233,22 @@ export const Navbar = () => {
               <li className="category-nav-item" onClick={() => navigateTo('products', { category: 'All' })}>
                 <Layers size={16} /> All Categories
               </li>
-              <li className="category-nav-item" onClick={() => navigateTo('products', { category: 'Mobiles' })}>
-                <Smartphone size={16} /> Mobiles
-              </li>
-              <li className="category-nav-item" onClick={() => navigateTo('products', { category: 'Apple' })}>
-                <Apple size={16} /> Apple Zone
-              </li>
-              <li className="category-nav-item" onClick={() => navigateTo('products', { category: 'Wearables' })}>
-                <Watch size={16} /> Wearables
-              </li>
-              <li className="category-nav-item" onClick={() => navigateTo('products', { category: 'Audio' })}>
-                <Headphones size={16} /> Audio & TWS
-              </li>
-              <li className="category-nav-item" onClick={() => navigateTo('products', { category: 'Chargers & Cables' })}>
-                <Zap size={16} /> Fast Chargers
-              </li>
-              <li className="category-nav-item" onClick={() => navigateTo('products', { category: 'Accessories' })}>
-                <Shield size={16} /> Accessories
-              </li>
+              {categories.slice(0, 6).map((c, idx) => {
+                // Map icons based on category name roughly
+                let Icon = Layers;
+                if (c.name.includes('Mobile')) Icon = Smartphone;
+                if (c.name.includes('Apple')) Icon = Apple;
+                if (c.name.includes('Wearable')) Icon = Watch;
+                if (c.name.includes('Audio')) Icon = Headphones;
+                if (c.name.includes('Charger')) Icon = Zap;
+                if (c.name.includes('Accessories')) Icon = Shield;
+                
+                return (
+                  <li key={c.id || idx} className="category-nav-item" onClick={() => navigateTo('products', { category: c.name })}>
+                    <Icon size={16} /> {c.name}
+                  </li>
+                );
+              })}
               <li className="category-nav-item deals-nav-item" onClick={() => navigateTo('home')}>
                 <Flame size={16} /> Super Deals 🔥
               </li>

@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { PRODUCTS_DATA } from '../data/products';
+import { productService } from '../services/productService';
 
 const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
-  const [activeView, setActiveView] = useState('home');
+  const [activeView, setActiveView] = useState(() => {
+    return sessionStorage.getItem('mm_active_view') || 'home';
+  });
   const [previousView, setPreviousView] = useState('home');
   const [selectedProductId, setSelectedProductId] = useState('m1');
   const [filters, setFilters] = useState({
@@ -14,6 +16,33 @@ export const StoreProvider = ({ children }) => {
     maxPrice: 200000,
     sort: 'popularity'
   });
+
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  const loadData = async () => {
+    setLoadingProducts(true);
+    try {
+      const [prodData, catData, brandData] = await Promise.all([
+        productService.getProducts(),
+        productService.getCategories(),
+        productService.getBrands()
+      ]);
+      setProducts(Array.isArray(prodData) ? prodData : prodData.content || []);
+      setCategories(Array.isArray(catData) ? catData : catData.content || []);
+      setBrands(Array.isArray(brandData) ? brandData : brandData.content || []);
+    } catch (error) {
+      console.error("Failed to load store data", error);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('mm_cart');
@@ -35,6 +64,16 @@ export const StoreProvider = ({ children }) => {
       name: 'Anubhab Sharma',
       email: 'anubhab@manojmobiles.com',
       phone: '+91 98765 43210'
+    };
+  });
+
+  const [adminUser, setAdminUser] = useState(() => {
+    const saved = localStorage.getItem('mm_admin_user');
+    return saved ? JSON.parse(saved) : {
+      loggedIn: false,
+      name: '',
+      email: '',
+      role: ''
     };
   });
 
@@ -62,6 +101,14 @@ export const StoreProvider = ({ children }) => {
     localStorage.setItem('mm_user', JSON.stringify(user));
   }, [user]);
 
+  useEffect(() => {
+    localStorage.setItem('mm_admin_user', JSON.stringify(adminUser));
+  }, [adminUser]);
+
+  useEffect(() => {
+    sessionStorage.setItem('mm_active_view', activeView);
+  }, [activeView]);
+
   const showToast = (message) => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message }]);
@@ -82,8 +129,17 @@ export const StoreProvider = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const navigateAdminTo = (adminView) => {
+    const fullViewName = adminView.startsWith('admin-') ? adminView : `admin-${adminView}`;
+    if (fullViewName !== activeView) {
+      setPreviousView(activeView);
+      setActiveView(fullViewName);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const addToCart = (productId, qty = 1, color = null, storage = null) => {
-    const product = PRODUCTS_DATA.find(p => p.id === productId);
+    const product = products.find(p => p.id === productId || p.id === Number(productId));
     if (!product) return;
 
     const selectedColor = color || (product.colors ? product.colors[0] : 'Standard');
@@ -120,7 +176,7 @@ export const StoreProvider = ({ children }) => {
   };
 
   const toggleWishlist = (productId) => {
-    const product = PRODUCTS_DATA.find(p => p.id === productId);
+    const product = products.find(p => p.id === productId || p.id === Number(productId));
     setWishlist(prev => {
       if (prev.includes(productId)) {
         showToast('Removed from Wishlist');
@@ -148,9 +204,11 @@ export const StoreProvider = ({ children }) => {
       activeView, previousView, navigateTo,
       selectedProductId, setSelectedProductId,
       filters, setFilters,
+      products, setProducts, refreshProducts: loadData, categories, brands, loadingProducts,
       cart, addToCart, updateCartQty, removeFromCart,
       wishlist, toggleWishlist,
       user, setUser,
+      adminUser, setAdminUser, navigateAdminTo,
       aiWizard, setAiWizard,
       appliedCoupon, applyCoupon,
       toasts, showToast,

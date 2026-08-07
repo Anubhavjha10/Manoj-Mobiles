@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Zap } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 
 export const HeroCarousel = () => {
-  const { navigateTo, addToCart, formatINR } = useStore();
+  const { navigateTo, addToCart, formatINR, products } = useStore();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
@@ -31,7 +30,7 @@ export const HeroCarousel = () => {
     }
   ];
 
-  const picks = PRODUCTS_DATA.slice(0, 2);
+  const picks = products.slice(0, 2);
 
   useEffect(() => {
     const timer = setInterval(() => {

@@ -1,11 +1,10 @@
 import React from 'react';
 import { Sparkles, ArrowLeft, ArrowRight, RefreshCw } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 import { ProductCard } from './ProductCard';
 
 export const AiMobileFinder = () => {
-  const { aiWizard, setAiWizard, formatINR } = useStore();
+  const { aiWizard, setAiWizard, formatINR, products } = useStore();
 
   const moveStep = (delta) => {
     setAiWizard(prev => {
@@ -32,13 +31,13 @@ export const AiMobileFinder = () => {
     setAiWizard({ step: 1, budget: 80000, useCase: 'Camera', brand: 'All', storage: '256GB' });
   };
 
-  const matches = PRODUCTS_DATA.filter(p => {
+  const matches = products.filter(p => {
     const brandMatch = aiWizard.brand === 'All' || p.brand === aiWizard.brand;
     const priceMatch = p.price <= (aiWizard.budget * 1.25);
     return brandMatch && priceMatch;
   }).slice(0, 2);
 
-  const bestMatch = matches[0] || PRODUCTS_DATA[0];
+  const bestMatch = matches[0] || products[0] || {};
 
   return (
     <section className="ai-finder-section" id="ai-finder">

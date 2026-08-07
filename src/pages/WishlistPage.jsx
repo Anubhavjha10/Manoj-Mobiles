@@ -1,12 +1,11 @@
 import React from 'react';
 import { HeartOff } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { PRODUCTS_DATA } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
 
 export const WishlistPage = () => {
-  const { wishlist, navigateTo } = useStore();
-  const list = PRODUCTS_DATA.filter(p => wishlist.includes(p.id));
+  const { wishlist, navigateTo, products } = useStore();
+  const list = products.filter(p => wishlist.includes(p.id) || wishlist.includes(String(p.id)));
 
   return (
     <div className="container" style={{ padding: '2rem 1.25rem' }}>

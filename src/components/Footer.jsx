@@ -3,7 +3,7 @@ import { Smartphone, Instagram, Youtube, Facebook } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 
 export const Footer = () => {
-  const { navigateTo } = useStore();
+  const { navigateTo, navigateAdminTo, categories } = useStore();
 
   return (
     <footer className="site-footer">
@@ -39,6 +39,7 @@ export const Footer = () => {
               <a onClick={() => navigateTo('wishlist')}>Saved Wishlist</a>
               <a onClick={() => navigateTo('cart')}>Shopping Cart</a>
               <a onClick={() => navigateTo('account')}>My Account</a>
+              <a onClick={() => navigateAdminTo('login')} style={{ color: '#38BDF8', fontWeight: 600 }}>Staff / Admin Login</a>
             </div>
           </div>
 
@@ -46,11 +47,16 @@ export const Footer = () => {
           <div>
             <h4 className="footer-col-title">Categories</h4>
             <div className="footer-links-list">
-              <a onClick={() => navigateTo('products', { category: 'Mobiles' })}>5G Smartphones</a>
-              <a onClick={() => navigateTo('products', { category: 'Apple' })}>Apple iPhones & iPads</a>
-              <a onClick={() => navigateTo('products', { category: 'Wearables' })}>Smartwatches</a>
-              <a onClick={() => navigateTo('products', { category: 'Audio' })}>Bluetooth Earbuds</a>
-              <a onClick={() => navigateTo('products', { category: 'Chargers & Cables' })}>GaN Chargers</a>
+              {categories && categories.length > 0 ? (
+                categories.slice(0, 5).map(c => (
+                  <a key={c.id} onClick={() => navigateTo('products', { category: c.name })}>{c.name}</a>
+                ))
+              ) : (
+                <>
+                  <a onClick={() => navigateTo('products', { category: 'Mobiles' })}>5G Smartphones</a>
+                  <a onClick={() => navigateTo('products', { category: 'Apple' })}>Apple iPhones & iPads</a>
+                </>
+              )}
             </div>
           </div>
 
