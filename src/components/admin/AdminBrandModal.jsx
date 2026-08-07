@@ -3,6 +3,7 @@ import { adminService } from '../../services/adminService';
 import { useStore } from '../../context/StoreContext';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { PremiumImageUpload } from './PremiumImageUpload';
 
 export const AdminBrandModal = () => {
   const { brands, refreshBrands, showToast } = useStore();
@@ -26,6 +27,8 @@ export const AdminBrandModal = () => {
   }, [id, brands, isEditing, navigate, showToast]);
 
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleImageChange = (url) => setFormData({ ...formData, logoUrl: url });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,20 +63,24 @@ export const AdminBrandModal = () => {
           {isEditing ? 'Edit Brand' : 'Create New Brand'}
         </h3>
         
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Brand Name</label>
             <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="e.g. Apple" required className="form-input" />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Logo URL (Optional)</label>
-            <input type="url" name="logoUrl" value={formData.logoUrl} onChange={handleInputChange} placeholder="https://..." className="form-input" />
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Brand Logo</label>
+            <PremiumImageUpload 
+              value={formData.logoUrl} 
+              onChange={handleImageChange} 
+              onUploadError={showToast} 
+            />
           </div>
-          <div style={{ gridColumn: '1 / -1' }}>
+          <div>
             <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Description</label>
             <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Brand description..." className="form-input" rows={3}></textarea>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', gridColumn: '1 / -1', justifyContent: 'flex-end', marginTop: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
             <button type="button" className="btn btn-outline" onClick={handleClose}>Cancel</button>
             <button type="submit" disabled={loading} className="btn btn-primary">{loading ? 'Saving...' : 'Save Brand'}</button>
           </div>

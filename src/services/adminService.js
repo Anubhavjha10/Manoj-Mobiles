@@ -256,6 +256,20 @@ export const adminService = {
     }
   },
 
+  // --- Upload ---
+  uploadImage: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      // Returns a string URL
+      const response = await api.postFormData('/admin/upload', formData);
+      return response;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  },
+
   // --- Categories & Brands ---
   createCategory: async (data) => {
     try {

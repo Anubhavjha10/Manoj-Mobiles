@@ -4,6 +4,7 @@ import { adminService } from '../../services/adminService';
 import { Plus, Trash2, Edit, Layers, X, Image as ImageIcon, Box, List } from 'lucide-react';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { useNavigate } from 'react-router-dom';
+import { PremiumImageUpload } from '../../components/admin/PremiumImageUpload';
 
 export const AdminProductsPage = () => {
   const { products, categories, brands, setProducts, refreshProducts, formatINR, showToast } = useStore();
@@ -321,10 +322,23 @@ const ImageModal = ({ variant, onClose }) => {
           <h3 className="form-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}><ImageIcon className="title-icon" /> Manage Images</h3>
           <button onClick={onClose} className="icon-btn" style={{ border: 'none' }}><X size={20} /></button>
         </div>
-        <form onSubmit={handleAdd} className="form-row mb-6">
-          <div style={{ flex: 1 }}><label>Image URL</label><input type="url" required className="form-input" placeholder="https://..." value={url} onChange={e => setUrl(e.target.value)} /></div>
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ height: '42px' }}>Add Link</button>
-        </form>
+        
+        <div className="mb-6">
+          <PremiumImageUpload 
+            value={url} 
+            onChange={setUrl} 
+            onUploadError={showToast} 
+          />
+          <button 
+            type="button" 
+            onClick={handleAdd} 
+            className="btn btn-primary" 
+            disabled={loading || !url} 
+            style={{ width: '100%', marginTop: '1rem', height: '42px' }}
+          >
+            {loading ? 'Adding Image...' : 'Add Image to Variant'}
+          </button>
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', minHeight: '120px' }}>
           {images.map((img, i) => (
             <div key={i} style={{ position: 'relative', border: '1px solid #E2E8F0', borderRadius: '8px', overflow: 'hidden', padding: '0.25rem' }}>
