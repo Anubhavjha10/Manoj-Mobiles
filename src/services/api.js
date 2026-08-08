@@ -12,6 +12,38 @@ export const setToken = (token) => {
   }
 };
 
+export const getRefreshToken = () => {
+  return localStorage.getItem('mm_refresh_token');
+};
+
+export const setRefreshToken = (token) => {
+  if (token) {
+    localStorage.setItem('mm_refresh_token', token);
+  } else {
+    localStorage.removeItem('mm_refresh_token');
+  }
+};
+
+export const getUserId = () => {
+  return localStorage.getItem('mm_user_id');
+};
+
+export const setUserId = (id) => {
+  if (id) {
+    localStorage.setItem('mm_user_id', id);
+  } else {
+    localStorage.removeItem('mm_user_id');
+  }
+};
+
+const clearAuthData = () => {
+  setToken(null);
+  setRefreshToken(null);
+  setUserId(null);
+  localStorage.removeItem('mm_admin_user');
+  localStorage.removeItem('mm_user');
+};
+
 const getHeaders = (options = {}) => {
   const headers = new Headers({
     'Content-Type': 'application/json',
@@ -26,15 +58,95 @@ const getHeaders = (options = {}) => {
   return headers;
 };
 
-const handleResponse = async (response) => {
-  if (!response.ok) {
-    if (response.status === 401) {
-      setToken(null);
-      localStorage.removeItem('mm_admin_user');
-      localStorage.removeItem('mm_user');
-      window.location.reload();
+// Silent Token Refresh Queue & Lock
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, newToken = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(newToken);
     }
-    
+  });
+  failedQueue = [];
+};
+
+const attemptSilentRefresh = async () => {
+  const refreshToken = getRefreshToken();
+  const userId = getUserId();
+
+  if (!refreshToken || !userId) {
+    throw new Error('No refresh token available');
+  }
+
+  const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, refreshToken })
+  });
+
+  if (!response.ok) {
+    throw new Error('Refresh token invalid or expired');
+  }
+
+  const result = await response.json();
+  const data = result?.data || result;
+  const newAccessToken = data?.token || data?.accessToken;
+  const newRefreshToken = data?.refreshToken;
+
+  if (newAccessToken) {
+    setToken(newAccessToken);
+    if (newRefreshToken) setRefreshToken(newRefreshToken);
+    return newAccessToken;
+  }
+
+  throw new Error('Failed to retrieve new access token');
+};
+
+const handleResponse = async (response, retryOriginalRequest) => {
+  if (!response.ok) {
+    // 401 Unauthorized -> Attempt Silent Refresh if token exists
+    if (response.status === 401 && !response.url.includes('/auth/refresh') && !response.url.includes('/auth/login')) {
+      const refreshToken = getRefreshToken();
+      const userId = getUserId();
+
+      if (refreshToken && userId) {
+        if (isRefreshing) {
+          // If a refresh is already in progress, wait for it
+          try {
+            const newToken = await new Promise((resolve, reject) => {
+              failedQueue.push({ resolve, reject });
+            });
+            return retryOriginalRequest(newToken);
+          } catch (err) {
+            clearAuthData();
+            window.location.reload();
+            throw err;
+          }
+        }
+
+        isRefreshing = true;
+
+        try {
+          const newToken = await attemptSilentRefresh();
+          isRefreshing = false;
+          processQueue(null, newToken);
+          return retryOriginalRequest(newToken);
+        } catch (refreshErr) {
+          isRefreshing = false;
+          processQueue(refreshErr, null);
+          clearAuthData();
+          window.location.reload();
+          throw refreshErr;
+        }
+      } else {
+        clearAuthData();
+        window.location.reload();
+      }
+    }
+
     // Try to parse error message from backend
     try {
       const errorData = await response.json();
@@ -45,9 +157,9 @@ const handleResponse = async (response) => {
     }
   }
 
-  // Handle empty responses
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.indexOf("application/json") !== -1) {
+  // Handle empty or JSON responses
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.indexOf('application/json') !== -1) {
     return response.json();
   } else {
     return response.text();
@@ -56,57 +168,91 @@ const handleResponse = async (response) => {
 
 export const api = {
   get: async (endpoint, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      method: 'GET',
-      headers: getHeaders(options)
-    });
-    return handleResponse(response);
+    const makeRequest = async (overrideToken) => {
+      const headers = getHeaders(options);
+      if (overrideToken) {
+        headers.set('Authorization', `Bearer ${overrideToken}`);
+      }
+      return fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        method: 'GET',
+        headers
+      });
+    };
+
+    const response = await makeRequest();
+    return handleResponse(response, makeRequest);
   },
 
   post: async (endpoint, data, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      method: 'POST',
-      headers: getHeaders(options),
-      body: JSON.stringify(data)
-    });
-    return handleResponse(response);
+    const makeRequest = async (overrideToken) => {
+      const headers = getHeaders(options);
+      if (overrideToken) {
+        headers.set('Authorization', `Bearer ${overrideToken}`);
+      }
+      return fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data)
+      });
+    };
+
+    const response = await makeRequest();
+    return handleResponse(response, makeRequest);
   },
 
   postFormData: async (endpoint, formData, options = {}) => {
-    const headers = new Headers(options.headers || {});
-    const token = getToken();
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-    // Do NOT set Content-Type header manually for FormData, browser sets it with boundary
+    const makeRequest = async (overrideToken) => {
+      const headers = new Headers(options.headers || {});
+      const token = overrideToken || getToken();
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        method: 'POST',
+        headers,
+        body: formData
+      });
+    };
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      method: 'POST',
-      headers: headers,
-      body: formData
-    });
-    return handleResponse(response);
+    const response = await makeRequest();
+    return handleResponse(response, makeRequest);
   },
 
   put: async (endpoint, data, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      method: 'PUT',
-      headers: getHeaders(options),
-      body: JSON.stringify(data)
-    });
-    return handleResponse(response);
+    const makeRequest = async (overrideToken) => {
+      const headers = getHeaders(options);
+      if (overrideToken) {
+        headers.set('Authorization', `Bearer ${overrideToken}`);
+      }
+      return fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(data)
+      });
+    };
+
+    const response = await makeRequest();
+    return handleResponse(response, makeRequest);
   },
 
   delete: async (endpoint, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      method: 'DELETE',
-      headers: getHeaders(options)
-    });
-    return handleResponse(response);
+    const makeRequest = async (overrideToken) => {
+      const headers = getHeaders(options);
+      if (overrideToken) {
+        headers.set('Authorization', `Bearer ${overrideToken}`);
+      }
+      return fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        method: 'DELETE',
+        headers
+      });
+    };
+
+    const response = await makeRequest();
+    return handleResponse(response, makeRequest);
   }
 };

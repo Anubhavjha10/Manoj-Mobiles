@@ -1,16 +1,20 @@
-import { api, setToken, getToken } from './api';
+import { api, setToken, getToken, setRefreshToken, setUserId } from './api';
 
 export const authService = {
   login: async (email, password) => {
     try {
       const response = await api.post('/auth/login', { email, password });
+      const data = response?.data || response;
       
-      const token = response?.data?.token || response?.token;
-      if (token) {
-        setToken(token);
-      }
+      const token = data?.token || data?.accessToken;
+      const refreshToken = data?.refreshToken;
+      const userId = data?.user?.id;
+
+      if (token) setToken(token);
+      if (refreshToken) setRefreshToken(refreshToken);
+      if (userId) setUserId(userId);
       
-      return response.data || response;
+      return data;
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -20,13 +24,17 @@ export const authService = {
   staffLogin: async (email, password) => {
     try {
       const response = await api.post('/auth/staff/login', { email, password });
+      const data = response?.data || response;
       
-      const token = response?.data?.token || response?.token;
-      if (token) {
-        setToken(token);
-      }
+      const token = data?.token || data?.accessToken;
+      const refreshToken = data?.refreshToken;
+      const userId = data?.user?.id;
+
+      if (token) setToken(token);
+      if (refreshToken) setRefreshToken(refreshToken);
+      if (userId) setUserId(userId);
       
-      return response.data || response;
+      return data;
     } catch (error) {
       console.error('Staff Login failed:', error);
       throw error;
@@ -45,7 +53,10 @@ export const authService = {
 
   logout: () => {
     setToken(null);
+    setRefreshToken(null);
+    setUserId(null);
     localStorage.removeItem('mm_user');
+    localStorage.removeItem('mm_admin_user');
   },
 
   isAuthenticated: () => {
