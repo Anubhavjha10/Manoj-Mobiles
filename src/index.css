@@ -4109,14 +4109,19 @@ label {
   border-bottom-color: #334155;
 }
 
-.dark-admin .page-title {
+.dark-admin .page-title,
+.dark-admin .admin-page-title {
   color: #F8FAFC;
 }
 
+.dark-admin .admin-profile-badge {
+  background: #1E293B;
+  border-color: #334155;
+}
+
 .dark-admin .admin-card,
-.dark-admin .stat-card,
+.dark-admin .admin-stat-card,
 .dark-admin .admin-table-container,
-.dark-admin .admin-page-container,
 .dark-admin .modal-content,
 .dark-admin .admin-form-box {
   background: #1E293B !important;
@@ -4125,14 +4130,23 @@ label {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
 }
 
+.dark-admin .stat-icon-wrap {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .dark-admin .admin-card h3,
-.dark-admin .stat-card h3,
+.dark-admin .admin-stat-card h3,
 .dark-admin .stat-label {
   color: #E2E8F0;
 }
 
 .dark-admin .stat-value {
   color: #F8FAFC;
+}
+
+.dark-admin .stat-arrow {
+  opacity: 0.9;
 }
 
 .dark-admin .admin-table th {

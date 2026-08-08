@@ -88,10 +88,10 @@ export const AdminLayout = () => {
             <div className="admin-profile-badge">
               <div className="profile-info">
                 <span className="greeting">Welcome back,</span>
-                <span className="name">{adminUser.name || 'System Admin'}</span>
+                <span className="name">{adminUser?.name?.trim() ? adminUser.name : 'System Admin'}</span>
               </div>
               <div className="avatar">
-                {adminUser.name ? adminUser.name.charAt(0).toUpperCase() : 'A'}
+                {(adminUser?.name?.trim() ? adminUser.name : 'System Admin').charAt(0).toUpperCase()}
               </div>
             </div>
           </div>
