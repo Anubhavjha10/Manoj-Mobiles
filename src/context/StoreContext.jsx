@@ -76,6 +76,10 @@ export const StoreProvider = ({ children }) => {
     };
   });
 
+  const [adminTheme, setAdminTheme] = useState(() => {
+    return localStorage.getItem('mm_admin_theme') || 'light';
+  });
+
   const [aiWizard, setAiWizard] = useState({
     step: 1,
     budget: 80000,
@@ -103,6 +107,10 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('mm_admin_user', JSON.stringify(adminUser));
   }, [adminUser]);
+
+  useEffect(() => {
+    localStorage.setItem('mm_admin_theme', adminTheme);
+  }, [adminTheme]);
 
   const showToast = (message) => {
     const id = Date.now();
@@ -209,6 +217,7 @@ export const StoreProvider = ({ children }) => {
       wishlist, toggleWishlist,
       user, setUser,
       adminUser, setAdminUser,
+      adminTheme, setAdminTheme,
       aiWizard, setAiWizard,
       appliedCoupon, applyCoupon,
       toasts, showToast,

@@ -4064,3 +4064,165 @@ label {
   overflow-y: auto;
 }
 
+/* =========================================================
+   DARK ADMIN MODE
+   ========================================================= */
+.dark-admin {
+  background-color: #0F172A;
+  color: #F8FAFC;
+}
+
+.dark-admin .premium-sidebar {
+  background: #1E293B;
+  border-right-color: #334155;
+}
+
+.dark-admin .sidebar-header {
+  border-bottom-color: #334155;
+}
+
+.dark-admin .brand-text h2 {
+  color: #F8FAFC;
+}
+
+.dark-admin .nav-btn {
+  color: #94A3B8;
+}
+
+.dark-admin .nav-btn:hover {
+  background-color: #334155;
+  color: #F1F5F9;
+}
+
+.dark-admin .nav-btn.active {
+  background-color: #0284C7;
+  color: #FFFFFF;
+}
+
+.dark-admin .sidebar-footer {
+  background: #1E293B;
+  border-top-color: #334155;
+}
+
+.dark-admin .premium-topbar {
+  background: #1E293B;
+  border-bottom-color: #334155;
+}
+
+.dark-admin .page-title {
+  color: #F8FAFC;
+}
+
+.dark-admin .admin-card,
+.dark-admin .stat-card,
+.dark-admin .admin-table-container,
+.dark-admin .admin-page-container,
+.dark-admin .modal-content,
+.dark-admin .admin-form-box {
+  background: #1E293B !important;
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-admin .admin-card h3,
+.dark-admin .stat-card h3,
+.dark-admin .stat-label {
+  color: #E2E8F0;
+}
+
+.dark-admin .stat-value {
+  color: #F8FAFC;
+}
+
+.dark-admin .admin-table th {
+  background: #334155 !important;
+  background-color: #334155 !important;
+  color: #F8FAFC !important;
+  border-bottom-color: #475569 !important;
+}
+
+.dark-admin .admin-table td {
+  border-bottom-color: #334155;
+  color: #E2E8F0;
+}
+
+.dark-admin .admin-table tr:hover {
+  background-color: #334155;
+}
+
+.dark-admin .form-input,
+.dark-admin select.form-input,
+.dark-admin textarea.form-input {
+  background-color: #0F172A !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+.dark-admin .form-input:focus {
+  border-color: #3B82F6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark-admin label {
+  color: #CBD5E1 !important;
+}
+
+.dark-admin .greeting {
+  color: #94A3B8;
+}
+
+.dark-admin .name {
+  color: #F8FAFC;
+}
+
+.dark-admin .ql-toolbar, 
+.dark-admin .ql-container {
+  border-color: #334155 !important;
+}
+
+.dark-admin .ql-editor {
+  color: #F8FAFC !important;
+}
+
+.dark-admin .ql-snow .ql-stroke {
+  stroke: #94A3B8;
+}
+
+.dark-admin .ql-snow .ql-fill {
+  fill: #94A3B8;
+}
+
+.dark-admin .ql-snow .ql-picker {
+  color: #94A3B8;
+}
+
+.dark-admin .empty-state {
+  color: #94A3B8 !important;
+}
+
+.dark-admin .id-badge {
+  background-color: #0F172A !important;
+  color: #94A3B8 !important;
+  border-color: #334155 !important;
+}
+
+.dark-admin .badge-outline {
+  background-color: transparent !important;
+  color: #E2E8F0 !important;
+  border-color: #475569 !important;
+}
+
+.dark-admin .modal-overlay {
+  background: rgba(15, 23, 42, 0.75) !important;
+}
+
+.dark-admin .icon-btn {
+  background-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+.dark-admin .icon-btn:hover {
+  background-color: #475569 !important;
+}
+

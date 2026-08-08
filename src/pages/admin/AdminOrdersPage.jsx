@@ -140,7 +140,7 @@ const TrackingModal = ({ order, onClose }) => {
 
   return (
     <div className="modal-overlay" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100 }}>
-      <div className="modal-content" style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '16px', width: '460px' }}>
+      <div className="modal-content" style={{ padding: '2rem', borderRadius: '16px', width: '460px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h3 className="form-title" style={{ margin: 0 }}>Live Tracking: {order.orderNumber || order.id.substring(0,8)}</h3>
           <button className="icon-btn" onClick={onClose} style={{ border: 'none' }}>✕</button>

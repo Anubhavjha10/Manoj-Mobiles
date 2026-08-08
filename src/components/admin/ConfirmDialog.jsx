@@ -5,7 +5,7 @@ export const ConfirmDialog = ({ isOpen, title, message, onConfirm, onCancel, con
   if (!isOpen) return null;
   return (
     <div className="modal-overlay" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
-      <div className="modal-content" style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '16px', width: '100%', maxWidth: '420px', textAlign: 'center' }}>
+      <div className="modal-content" style={{ padding: '2rem', borderRadius: '16px', width: '100%', maxWidth: '420px', textAlign: 'center' }}>
         <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: danger ? '#FEF2F2' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
           <AlertTriangle size={28} color={danger ? '#EF4444' : '#3B82F6'} />
         </div>

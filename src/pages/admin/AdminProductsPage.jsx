@@ -152,7 +152,7 @@ const VariantManagerModal = ({ product, onClose }) => {
 
   return (
     <div className="modal-overlay" style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-      <div className="modal-content" style={{ backgroundColor: 'white', width: '95%', maxWidth: '1100px', maxHeight: '90vh', overflowY: 'auto', borderRadius: '16px', padding: '2rem', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+      <div className="modal-content" style={{ width: '95%', maxWidth: '1100px', maxHeight: '90vh', overflowY: 'auto', borderRadius: '16px', padding: '2rem', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
         <button onClick={onClose} className="icon-btn" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', border: 'none', background: '#F1F5F9', color: '#475569' }}><X size={20} /></button>
         
         <h2 className="admin-page-title" style={{ marginBottom: '1.5rem' }}><Layers className="title-icon" /> Manage Variants for {product.name}</h2>

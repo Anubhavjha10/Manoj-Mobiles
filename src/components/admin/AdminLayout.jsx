@@ -1,11 +1,11 @@
 import React from 'react';
 import { useStore } from '../../context/StoreContext';
-import { LayoutDashboard, ShoppingCart, Package, Users, RotateCcw, LogOut, Settings, Network, Award, Truck, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Users, RotateCcw, LogOut, Settings, Network, Award, Truck, ChevronRight, Moon, Sun } from 'lucide-react';
 import { authService } from '../../services/authService';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 export const AdminLayout = () => {
-  const { setAdminUser, adminUser } = useStore();
+  const { setAdminUser, adminUser, adminTheme, setAdminTheme } = useStore();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export const AdminLayout = () => {
   ];
 
   return (
-    <div className="admin-layout-wrapper">
+    <div className={`admin-layout-wrapper ${adminTheme === 'dark' ? 'dark-admin' : ''}`}>
       {/* Premium Sidebar */}
       <aside className="premium-sidebar">
         <div className="sidebar-header">
@@ -76,7 +76,15 @@ export const AdminLayout = () => {
           <div className="topbar-left">
             <h3 className="page-title">{currentPath.replace('-', ' ')}</h3>
           </div>
-          <div className="topbar-right">
+          <div className="topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <button 
+              className="icon-btn" 
+              onClick={() => setAdminTheme(adminTheme === 'dark' ? 'light' : 'dark')}
+              style={{ color: adminTheme === 'dark' ? '#E2E8F0' : '#64748B', border: '1px solid', borderColor: adminTheme === 'dark' ? '#334155' : '#E2E8F0', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', background: 'transparent' }}
+              title="Toggle Dark Mode"
+            >
+              {adminTheme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <div className="admin-profile-badge">
               <div className="profile-info">
                 <span className="greeting">Welcome back,</span>
