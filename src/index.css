@@ -4250,6 +4250,12 @@ label {
   color: #94A3B8 !important;
 }
 
+.dark-admin .table-img-preview {
+  background-color: #0F172A !important;
+  border-color: #334155 !important;
+  color: #64748B !important;
+}
+
 .dark-admin .spec-header-row {
   color: #94A3B8 !important;
 }

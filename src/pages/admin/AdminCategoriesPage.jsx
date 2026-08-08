@@ -37,11 +37,11 @@ export const AdminCategoriesPage = () => {
       <div className="admin-table-container">
         <table className="admin-table">
           <thead>
-            <tr><th>ID</th><th>Category Name</th><th>Parent Category</th><th>Sub-categories</th><th>Actions</th></tr>
+            <tr><th>ID</th><th>Image</th><th>Category Name</th><th>Parent Category</th><th>Sub-categories</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {categories.length === 0 ? (
-              <tr><td colSpan="5" className="empty-state">No categories found.</td></tr>
+              <tr><td colSpan="6" className="empty-state">No categories found.</td></tr>
             ) : (
               categories.map(cat => {
                 const parentCat = categories.find(c => c.id === cat.parentId);
@@ -49,6 +49,17 @@ export const AdminCategoriesPage = () => {
                 return (
                   <tr key={cat.id}>
                     <td><span className="id-badge">{cat.id.substring(0, 8)}</span></td>
+                    <td>
+                      {cat.imageUrl ? (
+                        <div className="table-img-preview" style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8FAFC' }}>
+                          <img src={cat.imageUrl} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                      ) : (
+                        <div className="table-img-preview" style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#F1F5F9', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8' }}>
+                          <Network size={20} />
+                        </div>
+                      )}
+                    </td>
                     <td style={{ fontWeight: 600 }}>{cat.name}</td>
                     <td>{parentCat ? <span className="badge badge-outline">{parentCat.name}</span> : <span className="text-muted">Root</span>}</td>
                     <td><span className="badge">{subCats.length} items</span></td>
