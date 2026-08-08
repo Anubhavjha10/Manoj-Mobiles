@@ -164,17 +164,17 @@ export const AdminProductFormPage = () => {
         
         {/* SECTION 1: Basic Info */}
         <div className="admin-card">
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1E293B', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem' }}>
+          <h3 className="admin-card-section-title" style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '0.75rem' }}>
             <Info size={18} /> Basic Information
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Product Name</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>Product Name</label>
               <input required type="text" placeholder="e.g. iPhone 15 Pro Max (Titanium, 256GB)" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="form-input" style={{ fontSize: '1.1rem' }} />
               {formData.name && !isEditing && (
                 <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <span style={{ fontWeight: 600 }}>Auto-Slug Preview:</span> 
-                  <span style={{ background: '#F1F5F9', padding: '0.2rem 0.5rem', borderRadius: '4px', fontFamily: 'monospace' }}>
+                  <span className="auto-slug-badge" style={{ padding: '0.2rem 0.5rem', borderRadius: '4px', fontFamily: 'monospace' }}>
                     {generateSlug(formData.name)}
                   </span>
                 </div>
@@ -182,7 +182,7 @@ export const AdminProductFormPage = () => {
             </div>
             
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Brand</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>Brand</label>
               <select required value={formData.brandId} onChange={e => setFormData({...formData, brandId: e.target.value})} className="form-input">
                 <option value="">Select Brand...</option>
                 {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
@@ -190,7 +190,7 @@ export const AdminProductFormPage = () => {
             </div>
             
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Category</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>Category</label>
               <select required value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})} className="form-input">
                 <option value="">Select Category...</option>
                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -198,17 +198,17 @@ export const AdminProductFormPage = () => {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Warranty (Months)</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>Warranty (Months)</label>
               <input required type="number" placeholder="12" value={formData.warrantyMonths} onChange={e => setFormData({...formData, warrantyMonths: e.target.value})} className="form-input" />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>Return Policy (Days)</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>Return Policy (Days)</label>
               <input required type="number" placeholder="7" value={formData.returnPolicyDays} onChange={e => setFormData({...formData, returnPolicyDays: e.target.value})} className="form-input" />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', gridColumn: '1 / -1', padding: '0.5rem 0' }}>
               <input type="checkbox" id="isReturnable" checked={formData.isReturnable} onChange={e => setFormData({...formData, isReturnable: e.target.checked})} style={{ width: '18px', height: '18px', cursor: 'pointer' }} />
-              <label htmlFor="isReturnable" style={{ margin: 0, fontSize: '0.9rem', cursor: 'pointer', fontWeight: 500, color: '#334155' }}>Item is eligible for return</label>
+              <label htmlFor="isReturnable" style={{ margin: 0, fontSize: '0.9rem', cursor: 'pointer', fontWeight: 500 }}>Item is eligible for return</label>
             </div>
           </div>
         </div>
@@ -217,7 +217,7 @@ export const AdminProductFormPage = () => {
             <>
             {/* SECTION 2: Media Gallery */}
             <div className="admin-card">
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1E293B', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem' }}>
+              <h3 className="admin-card-section-title" style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '0.75rem' }}>
                 <ImageIcon size={18} /> Media Gallery (Default Variant)
               </h3>
               <MultiImageUpload 
@@ -229,52 +229,52 @@ export const AdminProductFormPage = () => {
 
             {/* SECTION 3: Pricing & Inventory */}
             <div className="admin-card">
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1E293B', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem' }}>
+              <h3 className="admin-card-section-title" style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '0.75rem' }}>
                 <Banknote size={18} /> Default Variant Pricing & Inventory
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Variant Name</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>Variant Name</label>
                   <input required type="text" placeholder="e.g. Standard or 128GB" value={formData.variantName} onChange={e => setFormData({...formData, variantName: e.target.value})} className="form-input" />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>SKU (Stock Keeping Unit)</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>SKU (Stock Keeping Unit)</label>
                   <input required type="text" placeholder="e.g. IPH-15-PRO-256" value={formData.sku} onChange={e => setFormData({...formData, sku: e.target.value})} className="form-input" />
                 </div>
                 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>MRP (₹)</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>MRP (₹)</label>
                   <input required type="number" step="0.01" placeholder="99999" value={formData.mrp} onChange={e => setFormData({...formData, mrp: e.target.value})} className="form-input" />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Selling Price (₹)</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>Selling Price (₹)</label>
                   <input required type="number" step="0.01" placeholder="89999" value={formData.sellingPrice} onChange={e => setFormData({...formData, sellingPrice: e.target.value})} className="form-input" />
                 </div>
                 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>GST Percentage (%)</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>GST Percentage (%)</label>
                   <input required type="number" step="0.01" placeholder="18" value={formData.gstPercentage} onChange={e => setFormData({...formData, gstPercentage: e.target.value})} className="form-input" />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>Initial Stock Quantity</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>Initial Stock Quantity</label>
                   <input required type="number" placeholder="10" value={formData.stockQuantity} onChange={e => setFormData({...formData, stockQuantity: e.target.value})} className="form-input" />
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', gridColumn: '1 / -1' }}>
                   <input type="checkbox" id="isCodAvailable" checked={formData.isCodAvailable} onChange={e => setFormData({...formData, isCodAvailable: e.target.checked})} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
-                  <label htmlFor="isCodAvailable" style={{ margin: 0, fontSize: '0.85rem', cursor: 'pointer', fontWeight: 600, color: '#334155' }}>Cash on Delivery Available</label>
+                  <label htmlFor="isCodAvailable" style={{ margin: 0, fontSize: '0.85rem', cursor: 'pointer', fontWeight: 600 }}>Cash on Delivery Available</label>
                 </div>
               </div>
             </div>
 
             {/* SECTION 4: Technical Specifications */}
             <div className="admin-card">
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1E293B', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem' }}>
+              <h3 className="admin-card-section-title" style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '0.75rem' }}>
                 <Box size={18} /> Technical Specifications
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr auto', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, color: '#64748B', padding: '0 0.5rem' }}>
+                <div className="spec-header-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr auto', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, padding: '0 0.5rem' }}>
                   <div>Group (e.g. Display)</div>
                   <div>Key (e.g. Size)</div>
                   <div>Value (e.g. 6.7 inches)</div>
@@ -292,7 +292,7 @@ export const AdminProductFormPage = () => {
                   </div>
                 ))}
 
-                <button type="button" onClick={handleAddSpec} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', padding: '0.5rem 1rem', background: '#F1F5F9', color: '#3B82F6', border: '1px solid #E2E8F0', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', alignSelf: 'flex-start', marginTop: '0.5rem' }}>
+                <button type="button" onClick={handleAddSpec} className="btn-add-spec" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', alignSelf: 'flex-start', marginTop: '0.5rem' }}>
                   <Plus size={16} /> Add Specification Row
                 </button>
               </div>
@@ -302,7 +302,7 @@ export const AdminProductFormPage = () => {
 
         {/* SECTION 5: Description */}
         <div className="admin-card">
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1E293B', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem' }}>
+          <h3 className="admin-card-section-title" style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '0.75rem' }}>
             <PenTool size={18} /> Rich Description
           </h3>
           <PremiumRichTextEditor 
@@ -312,7 +312,7 @@ export const AdminProductFormPage = () => {
         </div>
         
         {/* SUBMIT BUTTON */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem', padding: '1rem', background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', position: 'sticky', bottom: '1rem', zIndex: 10 }}>
+        <div className="admin-form-sticky-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem', padding: '1rem', borderRadius: '12px', position: 'sticky', bottom: '1rem', zIndex: 10 }}>
           <button type="submit" disabled={loading} className="btn btn-primary" style={{ padding: '0.85rem 2.5rem', fontSize: '1rem', flex: 1 }}>
             {loading ? 'Processing...' : (isEditing ? 'Update Product' : 'Save Complete Product')}
           </button>

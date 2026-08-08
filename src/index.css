@@ -3682,6 +3682,32 @@ label {
   padding: 1.5rem;
 }
 
+.admin-card-section-title {
+  color: #1E293B;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.auto-slug-badge {
+  background: #F1F5F9;
+  color: #475569;
+}
+
+.spec-header-row {
+  color: #64748B;
+}
+
+.btn-add-spec {
+  background: #F1F5F9;
+  color: #3B82F6;
+  border: 1px solid #E2E8F0;
+}
+
+.admin-form-sticky-actions {
+  background: white;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
 /* --- Admin Stats Grid --- */
 .admin-stats-grid {
   display: grid;
@@ -4137,8 +4163,95 @@ label {
 
 .dark-admin .admin-card h3,
 .dark-admin .admin-stat-card h3,
+.dark-admin .admin-card-section-title,
 .dark-admin .stat-label {
-  color: #E2E8F0;
+  color: #E2E8F0 !important;
+  border-bottom-color: #334155 !important;
+}
+
+.dark-admin .multi-image-dropzone,
+.dark-admin .premium-upload-dropzone,
+.dark-admin .upload-preview-box {
+  background-color: #0F172A !important;
+  border-color: #334155 !important;
+}
+
+.dark-admin .dropzone-icon-circle {
+  background-color: #1E293B !important;
+  color: #60A5FA !important;
+}
+
+.dark-admin .dropzone-text-primary {
+  color: #F8FAFC !important;
+}
+
+.dark-admin .dropzone-text-secondary {
+  color: #94A3B8 !important;
+}
+
+.upload-mode-switcher {
+  display: flex;
+  background: #F1F5F9;
+  padding: 0.25rem;
+  border-radius: 8px;
+  width: max-content;
+}
+
+.upload-mode-btn {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.upload-mode-btn.active {
+  background: #FFFFFF;
+  color: #0F172A;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark-admin .upload-mode-switcher {
+  background: #0F172A !important;
+  border: 1px solid #334155;
+}
+
+.dark-admin .upload-mode-btn {
+  color: #94A3B8 !important;
+}
+
+.dark-admin .upload-mode-btn.active {
+  background: #1E293B !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-admin .admin-form-sticky-actions {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-admin .btn-add-spec {
+  background: #0F172A !important;
+  color: #60A5FA !important;
+  border-color: #334155 !important;
+}
+
+.dark-admin .auto-slug-badge {
+  background: #0F172A !important;
+  color: #94A3B8 !important;
+}
+
+.dark-admin .spec-header-row {
+  color: #94A3B8 !important;
 }
 
 .dark-admin .stat-value {

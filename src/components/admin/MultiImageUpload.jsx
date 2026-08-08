@@ -94,6 +94,7 @@ export const MultiImageUpload = ({ value = [], onChange, onUploadError, folder =
       
       {/* Dropzone */}
       <div 
+        className="multi-image-dropzone"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -113,7 +114,7 @@ export const MultiImageUpload = ({ value = [], onChange, onUploadError, folder =
           minHeight: '160px'
         }}
       >
-        <div style={{ 
+        <div className="dropzone-icon-circle" style={{ 
           width: '48px', height: '48px', 
           backgroundColor: isDragging ? '#DBEAFE' : '#F1F5F9',
           color: isDragging ? '#2563EB' : '#64748B',
@@ -124,10 +125,10 @@ export const MultiImageUpload = ({ value = [], onChange, onUploadError, folder =
         </div>
         
         <div style={{ textAlign: 'center' }}>
-          <p style={{ margin: '0 0 0.25rem', fontSize: '0.95rem', fontWeight: 600, color: '#334155' }}>
+          <p className="dropzone-text-primary" style={{ margin: '0 0 0.25rem', fontSize: '0.95rem', fontWeight: 600, color: '#334155' }}>
             Click or drag multiple images here
           </p>
-          <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>
+          <p className="dropzone-text-secondary" style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>
             Supports JPG, PNG, WEBP (Max 25MB each)
           </p>
         </div>

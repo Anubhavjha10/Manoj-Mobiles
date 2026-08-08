@@ -91,7 +91,7 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'g
   // If we have an active image (either uploaded or local preview), show the preview and hide the dropzone!
   if (activeImage) {
     return (
-      <div style={{ position: 'relative', border: '1px solid #E2E8F0', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#F8FAFC', padding: '0.75rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="upload-preview-box" style={{ position: 'relative', border: '1px solid #E2E8F0', borderRadius: '12px', overflow: 'hidden', padding: '0.75rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
           <img 
             src={activeImage} 
@@ -100,9 +100,9 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'g
             onError={(e) => { e.target.src = 'https://placehold.co/400x400/F1F5F9/94A3B8?text=Invalid+Image'; }}
           />
           {isUploading && (
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.7)', borderRadius: '8px', gap: '0.5rem' }}>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.85)', borderRadius: '8px', gap: '0.5rem' }}>
               <Loader2 size={32} className="lucide-spin" style={{ animation: 'spin 1s linear infinite', color: '#3B82F6' }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1E40AF' }}>Uploading to Cloud...</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#60A5FA' }}>Uploading to Cloud...</span>
             </div>
           )}
         </div>
@@ -128,18 +128,18 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'g
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       
       {/* Mode Switcher */}
-      <div style={{ display: 'flex', background: '#F1F5F9', padding: '0.25rem', borderRadius: '8px', width: 'max-content' }}>
+      <div className="upload-mode-switcher">
         <button 
           type="button"
           onClick={() => setInputMode('upload')}
-          style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', fontWeight: 600, border: 'none', borderRadius: '6px', background: inputMode === 'upload' ? '#FFFFFF' : 'transparent', color: inputMode === 'upload' ? '#0F172A' : '#64748B', boxShadow: inputMode === 'upload' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+          className={`upload-mode-btn ${inputMode === 'upload' ? 'active' : ''}`}
         >
           <UploadCloud size={14} /> Upload File
         </button>
         <button 
           type="button"
           onClick={() => setInputMode('url')}
-          style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', fontWeight: 600, border: 'none', borderRadius: '6px', background: inputMode === 'url' ? '#FFFFFF' : 'transparent', color: inputMode === 'url' ? '#0F172A' : '#64748B', boxShadow: inputMode === 'url' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+          className={`upload-mode-btn ${inputMode === 'url' ? 'active' : ''}`}
         >
           <LinkIcon size={14} /> Link URL
         </button>
@@ -147,6 +147,7 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'g
 
       {inputMode === 'upload' ? (
         <div 
+          className="premium-upload-dropzone"
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -154,7 +155,6 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'g
           style={{
             border: `2px dashed ${isDragging ? '#3B82F6' : '#CBD5E1'}`,
             borderRadius: '12px',
-            backgroundColor: isDragging ? 'rgba(59, 130, 246, 0.05)' : '#F8FAFC',
             padding: '1.5rem 1rem',
             display: 'flex',
             flexDirection: 'column',
@@ -181,14 +181,14 @@ export const PremiumImageUpload = ({ value, onChange, onUploadError, folder = 'g
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: '#64748B', gap: '0.75rem' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8' }}>
+              <div className="dropzone-icon-circle" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <UploadCloud size={24} />
               </div>
               <div style={{ textAlign: 'center' }}>
-                <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+                <span className="dropzone-text-primary" style={{ fontSize: '0.95rem', fontWeight: 600, display: 'block', marginBottom: '0.25rem' }}>
                   Click to upload <span style={{ fontWeight: 400 }}>or drag and drop</span>
                 </span>
-                <span style={{ fontSize: '0.75rem' }}>PNG, JPG, WEBP or GIF (max. 5MB)</span>
+                <span className="dropzone-text-secondary" style={{ fontSize: '0.75rem' }}>PNG, JPG, WEBP or GIF (max. 5MB)</span>
               </div>
             </div>
           )}

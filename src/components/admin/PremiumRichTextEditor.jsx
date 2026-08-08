@@ -69,6 +69,34 @@ export const PremiumRichTextEditor = ({ value, onChange, placeholder = "Enter de
         .premium-rte-container:focus-within .ql-toolbar.ql-snow {
           border-color: #3B82F6;
         }
+        
+        /* Dark Theme Support */
+        .dark-admin .premium-rte-container .quill {
+          background-color: #0F172A;
+        }
+        .dark-admin .premium-rte-container .ql-toolbar.ql-snow {
+          background-color: #1E293B;
+          border-color: #334155;
+        }
+        .dark-admin .premium-rte-container .ql-container.ql-snow {
+          background-color: #0F172A;
+          border-color: #334155;
+        }
+        .dark-admin .premium-rte-container .ql-editor {
+          color: #F8FAFC;
+        }
+        .dark-admin .premium-rte-container .ql-editor.ql-blank::before {
+          color: #64748B;
+        }
+        .dark-admin .premium-rte-container .ql-snow .ql-stroke {
+          stroke: #94A3B8;
+        }
+        .dark-admin .premium-rte-container .ql-snow .ql-fill {
+          fill: #94A3B8;
+        }
+        .dark-admin .premium-rte-container .ql-snow .ql-picker {
+          color: #94A3B8;
+        }
       `}</style>
     </div>
   );
