@@ -1,9 +1,9 @@
 import { api, setToken, getToken, setRefreshToken, setUserId } from './api';
 
 export const authService = {
-  login: async (email, password) => {
+  customerLogin: async (phone, otp) => {
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { phone, otp });
       const data = response?.data || response;
       
       const token = data?.token || data?.accessToken;
@@ -16,7 +16,17 @@ export const authService = {
       
       return data;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Customer Login failed:', error);
+      throw error;
+    }
+  },
+
+  sendOtp: async (phone) => {
+    try {
+      const response = await api.post('/auth/send-otp', { phone });
+      return response?.data || response;
+    } catch (error) {
+      console.error('Send OTP failed:', error);
       throw error;
     }
   },

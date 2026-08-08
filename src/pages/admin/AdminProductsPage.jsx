@@ -4,7 +4,7 @@ import { adminService } from '../../services/adminService';
 import { Plus, Trash2, Edit, Layers, X, Image as ImageIcon, Box, List } from 'lucide-react';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { useNavigate } from 'react-router-dom';
-import { PremiumImageUpload } from '../../components/admin/PremiumImageUpload';
+import { MultiImageUpload } from '../../components/admin/MultiImageUpload';
 
 export const AdminProductsPage = () => {
   const { products, categories, brands, setProducts, refreshProducts, formatINR, showToast } = useStore();
@@ -120,13 +120,21 @@ const VariantManagerModal = ({ product, onClose }) => {
     e.preventDefault();
     setLoading(true);
     try {
+      const payload = { gstPercent: 0, ...editData };
+      let variantId = editData.id;
       if (editData.id) {
-        await adminService.updateVariant(editData.id, editData);
+        await adminService.updateVariant(editData.id, payload);
         showToast('Variant updated');
       } else {
-        await adminService.createVariant(editData);
+        const res = await adminService.createVariant(payload);
+        variantId = res?.data?.id || res?.id;
         showToast('Variant created');
       }
+      
+      if (variantId && editData.images && editData.images.length > 0) {
+        await adminService.addVariantImages(variantId, editData.images);
+      }
+
       setActiveTab('list');
       await fetchUpdatedProduct();
     } catch(err) {
@@ -159,7 +167,7 @@ const VariantManagerModal = ({ product, onClose }) => {
 
         {activeTab === 'list' && (
           <>
-            <button className="btn btn-primary mb-6" onClick={() => { setEditData({ productId: product.id, variantName: '', sku: '', mrp: 0, sellingPrice: 0, gstPercent: 18, stockQty: 0, codAvailable: true }); setActiveTab('edit'); }}>
+            <button className="btn btn-primary mb-6" onClick={() => { setEditData({ productId: product.id, variantName: '', sku: '', mrp: 0, sellingPrice: 0, gstPercent: 0, stockQty: 0, codAvailable: true }); setActiveTab('edit'); }}>
               <Plus size={16} /> Add New Variant
             </button>
             <div className="admin-table-container">
@@ -216,12 +224,23 @@ const VariantManagerModal = ({ product, onClose }) => {
               <div><label>SKU (Must be Unique)</label><input required type="text" className="form-input" placeholder="IP15-256-BLU" value={editData.sku} onChange={e => setEditData({...editData, sku: e.target.value})} /></div>
               <div><label>MRP (₹)</label><input required type="number" step="0.01" className="form-input" value={editData.mrp} onChange={e => setEditData({...editData, mrp: parseFloat(e.target.value)})} /></div>
               <div><label>Selling Price (₹)</label><input required type="number" step="0.01" className="form-input" value={editData.sellingPrice} onChange={e => setEditData({...editData, sellingPrice: parseFloat(e.target.value)})} /></div>
-              <div><label>GST (%)</label><input required type="number" step="0.01" className="form-input" value={editData.gstPercent} onChange={e => setEditData({...editData, gstPercent: parseFloat(e.target.value)})} /></div>
               <div><label>Initial Stock Qty</label><input required type="number" className="form-input" value={editData.stockQty} disabled={!!editData.id} onChange={e => setEditData({...editData, stockQty: parseInt(e.target.value)})} title={editData.id ? "Use Inventory Adjustment tool to change stock" : ""} /></div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', gridColumn: '1 / -1', padding: '0.5rem 0' }}>
                 <input type="checkbox" id="cod" checked={editData.codAvailable} onChange={e => setEditData({...editData, codAvailable: e.target.checked})} style={{ width: '18px', height: '18px', cursor: 'pointer' }} />
                 <label htmlFor="cod" style={{ margin: 0, cursor: 'pointer' }}>Cash on Delivery Available</label>
               </div>
+
+              {!editData.id && (
+                <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem' }}>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}>Variant Images (Multiple Upload)</label>
+                  <MultiImageUpload 
+                    value={editData.images || []}
+                    onChange={(newImages) => setEditData(prev => ({ ...prev, images: newImages }))}
+                    folder="products"
+                  />
+                </div>
+              )}
+
               <div style={{ display: 'flex', gap: '0.75rem', gridColumn: '1 / -1', justifyContent: 'flex-end', marginTop: '1rem' }}>
                 <button type="button" className="btn btn-outline" onClick={() => setActiveTab('list')}>Cancel</button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Saving...' : 'Save Variant'}</button>
